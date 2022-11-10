@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using ECS.Scripts.Real;
 using UnityEngine;
 
 
@@ -12,15 +14,16 @@ public class ECStest : MonoBehaviour
 {
 
    private List<ContiguousData> data;
-   
+
+  // private ComponentArrayContainer collection;
     // Start is called before the first frame update
     void Start()
     {
-        var entityData = new ContiguousData
-        {
-            [10] = 10
-        };
-        data.Add(entityData);
+        // var entityData = new ContiguousData
+        // {
+        //     [10] = 10
+        // };
+        // data.Add(entityData);
     }
 
     void Update()

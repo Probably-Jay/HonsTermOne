@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using ECS.Scripts.Real;
 using UnityEngine;
 
 namespace ECS.Scripts.New_Folder
@@ -8,11 +9,14 @@ namespace ECS.Scripts.New_Folder
     public class ComponentLister : MonoBehaviour
     {
         private readonly CustomList<MyComponent> myList = new();
+      //  private ComponentArrayContainer collection;
 
         private void Start()
         {
-            Init();
-            Foo();
+           // collection = new ComponentArrayContainer();
+
+           // Init();
+            //Foo();
         }
 
         void Init()
@@ -101,14 +105,17 @@ namespace ECS.Scripts.New_Folder
         }
     }
     
-    public class CustomList<T> where T :struct, IComponentListData
+    public class CustomList<T> : IComponentContainer where T :struct, IComponentECS
     {
         private T[] data;
         public int Count { get; private set; }
 
-        public CustomList(int? initialCapacity = null)
+        public CustomList() : this(4)
         {
-            data = new T[initialCapacity ?? 4];
+        }
+        public CustomList(int initialCapacity)
+        {
+            data = new T[initialCapacity];
         }
         
         public void Add(T element)
@@ -122,6 +129,7 @@ namespace ECS.Scripts.New_Folder
         }
 
         public ref T Get(int index) => ref data[index];
+        public ref T this[int index] => ref Get(index);
 
         public Enumerator GetEnumerator() => new(this);
 
@@ -141,7 +149,7 @@ namespace ECS.Scripts.New_Folder
         }
     }
 
-    public class ComponentArray<T> where T : struct,  IComponentListData 
+    public class ComponentArray<T> where T : struct,  IComponentECS 
     {
         private T[] data;
 
@@ -171,12 +179,12 @@ namespace ECS.Scripts.New_Folder
     }
         
         
-    public interface IComponentListData : IEquatable<IComponentListData>
+    public interface IComponentECS : IEquatable<IComponentECS>
     {
         
     }
 
-    public struct MyComponent : IComponentListData
+    public struct MyComponent : IComponentECS
     {
   
         public int Data { get; set; }
@@ -185,7 +193,7 @@ namespace ECS.Scripts.New_Folder
             throw new NotImplementedException();
         }
 
-        public bool Equals(IComponentListData other)
+        public bool Equals(IComponentECS other)
         {
             throw new NotImplementedException();
         }
