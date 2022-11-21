@@ -11,6 +11,9 @@ namespace ECS.Scripts.Real
     {
         GenerationalID GenerationalID { get; }
     }
+
     public interface IComponentECS : IEntityComponentECS
-    { }
+    {
+        void SetEntity(Entity entity);
+    }
 }

@@ -8,12 +8,12 @@ namespace ECS.Scripts.Real
 {
     public class TestClass : MonoBehaviour
     {
-        private ComponentAnymap container;
+       // private ComponentAnymap container;
 
 
         private void Awake()
         {
-            container = new ComponentAnymap();
+       //     container = new ComponentAnymap();
         }
 
         private void Start()
@@ -23,16 +23,15 @@ namespace ECS.Scripts.Real
 
         private void Test()
         {
-            var entity = new Entity(new GenerationalID(1, 0));
-            var f = new Foo() { data = 1, EntityID = entity  };
-            container.Add(f);
+            var entity = World.CreateEntity();
+            entity.AddComponent<Foo>();            
 
-            ref var data = ref container.Get<Foo>(entity);
+            ref var data = ref entity.GetComponent<Foo>();
             Debug.Log(data);
 
-            data.data = 2;
+            data.data = 1;
             
-            ref var data2 = ref container.Get<Foo>(entity);
+            ref var data2 = ref entity.GetComponent<Foo>();
             Debug.Log(data);
         }
     }
@@ -42,7 +41,11 @@ namespace ECS.Scripts.Real
     {
         public int data { get; set; }
         
-        public Entity EntityID { get; set; }
+        public Entity EntityID { get; private set; }
+        public void SetEntity(Entity entity)
+        {
+            EntityID = entity;
+        }
 
         public override string ToString()
         {

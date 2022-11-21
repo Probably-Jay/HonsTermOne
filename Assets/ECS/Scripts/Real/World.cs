@@ -7,24 +7,45 @@ using UnityEngine;
 namespace ECS.Scripts.Real
 {
 
-    public class World
+    public static class World
     {
-        private EntityContainer entityContainer;
+        private static EntityList EntityArray { get; } = new(100);
+        private static ComponentAnymap ComponentArrays { get; } = new();
+
+        public static Entity CreateEntity()
+        {
+            return EntityArray.CreateEntity();
+        }
+
+        public static ref T AddComponent<T>(in Entity entity) where T : struct, IComponentECS
+        {
+            var component = new T();
+            component.SetEntity(entity);
+            ComponentArrays.Add(component);
+            return ref GetComponent<T>(entity);
+        }
+
+        public static ref T GetComponent<T>(in Entity entity) where T : struct, IComponentECS
+        {
+            return ref ComponentArrays.Get<T>(entity);
+        }
     }
     
-    public class EntityContainer
+ 
+
+
+
+    public static class WorldExtensions
     {
-        private EntityIDArray entityArray;
-        private ComponentAnymap componentArrays;
+        public static void AddComponent<T>(this in Entity entity) where T : struct, IComponentECS
+        {
+            World.AddComponent<T>(entity);
+        }
+        public static ref T GetComponent<T>(this in Entity entity) where T : struct, IComponentECS
+        {
+           return ref World.GetComponent<T>(entity);
+        }
     }
-
-    internal class EntityIDArray
-    {
-        private ComponentList<Entity> entites;
-        
-    }
-
-
   
     
 }

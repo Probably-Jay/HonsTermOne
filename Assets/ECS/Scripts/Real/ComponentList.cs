@@ -15,7 +15,7 @@ namespace ECS.Scripts.Real
         void Add(T newComponent);
         ref T Get(in Entity entity);
     }
-    
+
     internal class ComponentList<T> : IComponentContainer<T> where T :  struct, IEntityComponentECS
     {
         private readonly NonBoxingList<T> list;
@@ -113,14 +113,17 @@ namespace ECS.Scripts.Real
         public class Enumerator
         {
             private readonly NonBoxingList<T> data;
-            public Enumerator(NonBoxingList<T> data) => this.data = data;
+            public Enumerator(NonBoxingList<T> data)
+            {
+                this.data = data;
+            }
 
-            private long index = -1;
+            private ulong index = 0; // intentionally start at 0 to skip 0, first valid index always 1
             
-            //todo make this valid only
-            public bool MoveNext() => ++index < (long)data.SizeReserved;
+            //todo make this valid only?
+            public bool MoveNext() => ++index < data.SizeReserved;
 
-            public void Reset() => index = -1;
+            public void Reset() => index = 0;
             public ref T Current => ref data[(ulong)index];
 
             public void Dispose()

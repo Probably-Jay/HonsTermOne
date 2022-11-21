@@ -4,16 +4,16 @@ namespace ECS.Scripts.Real
 {
     public readonly struct Entity : IEntityECS, IEquatable<Entity>
     {
-        // todo remove
-        public Entity(GenerationalID generationalID)
+        private Entity(GenerationalID id)
         {
-            GenerationalID = generationalID;
+            GenerationalID = id;
         }
+
+        public GenerationalID GenerationalID { get; } 
         
         public Entity EntityID => this;
         public ulong IdIndex => GenerationalID.ID;
 
-        public GenerationalID GenerationalID { get; } 
 
         public bool Equals(Entity other) => GenerationalID.Equals(other.GenerationalID);
 
@@ -24,7 +24,24 @@ namespace ECS.Scripts.Real
 
         public override int GetHashCode() => GenerationalID.GetHashCode();
         internal static Entity NullEntity => new Entity();
-        
+
+        public static Entity New(ulong index)
+        {
+            return new Entity(Real.GenerationalID.NewID(index));
+        }
+
+        public static void Reuse(ulong index, ref Entity entity)
+        {
+            if (!entity.IsNullEntity())
+                throw new EntityMustBeDestroyedBeforeIDIsReused();
+            
+            entity = new Entity(GenerationalID.ReuseID(index, entity.GenerationalID));
+        }
+
+        public static void Destroy(ref Entity entity)
+        {
+            entity = new Entity(GenerationalID.SetIDNull(entity.GenerationalID));
+        }
     }
     public static class EntityExtensions
     {

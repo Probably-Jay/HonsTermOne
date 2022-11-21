@@ -160,5 +160,9 @@ namespace ECS.Scripts.New_Folder
         }
 
         public Entity EntityID { get; }
+        public void SetEntity(Entity entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

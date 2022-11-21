@@ -7,18 +7,23 @@ namespace ECS.Scripts.Real
 
     public readonly struct GenerationalID : IEquatable<GenerationalID>, IComparable<GenerationalID>
     {
-        // todo make this private?
-        public GenerationalID(uint id, int generation)
+        public GenerationalID(ulong id, ulong generation)
         {
             if(id == 0)
                 throw new NullIDCannotBeUsedException();
 
             ID = id;
             Generation = generation;
+        }      
+        
+        public GenerationalID(ulong generation)
+        {
+            ID = 0;
+            Generation = generation;
         }
 
         public ulong ID { get; }
-        private long Generation { get; }
+        private ulong Generation { get; }
 
         public static GenerationalID NullID => new GenerationalID();
 
@@ -52,6 +57,21 @@ namespace ECS.Scripts.Real
             
             return Generation.CompareTo(other.Generation);
         }
+
+        public static GenerationalID NewID(ulong index)
+        {
+            return new GenerationalID(index, 0);
+        }
+
+        public static GenerationalID ReuseID(ulong index, GenerationalID entityGenerationalID)
+        {
+            return new GenerationalID(index, entityGenerationalID.Generation + 1);
+        }
+
+        public static GenerationalID SetIDNull(GenerationalID entityGenerationalID)
+        {
+            return new GenerationalID(generation: entityGenerationalID.Generation);
+        }
     }
 
     public class NullIDCannotBeUsedException : Exception
@@ -67,6 +87,12 @@ namespace ECS.Scripts.Real
     public class EntityIDMismatchException : Exception
     {
         public EntityIDMismatchException() : base("This operation is only valid on different generations of the same ID.")
+        { }
+    }  
+    
+    public class EntityMustBeDestroyedBeforeIDIsReused : Exception
+    {
+        public EntityMustBeDestroyedBeforeIDIsReused() : base("Entity can only be created when the existing entity with this ID is destroyed")
         { }
     }
 }
