@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using ECS.Scripts.New_Folder;
 using UnityEngine;
 
@@ -6,29 +8,44 @@ namespace ECS.Scripts.Real
 {
     public class TestClass : MonoBehaviour
     {
-        private ComponentArrayContainer container = new();
+        private ComponentAnymap container;
+
 
         private void Awake()
         {
-            container.ScanForTypes();
+            container = new ComponentAnymap();
         }
 
         private void Start()
         {
-            var f = new Foo() {data = true};
+            Test();
+        }
+
+        private void Test()
+        {
+            var entity = new Entity(new GenerationalID(1, 0));
+            var f = new Foo() { data = 1, EntityID = entity  };
             container.Add(f);
 
-            var data = container.GetList<Foo>()![0].data;
+            ref var data = ref container.Get<Foo>(entity);
+            Debug.Log(data);
+
+            data.data = 2;
+            
+            ref var data2 = ref container.Get<Foo>(entity);
             Debug.Log(data);
         }
     }
 
     public struct Foo : IComponentECS
     {
-        public bool data { get; set; }
-        public bool Equals(IComponentECS other)
+        public int data { get; set; }
+        
+        public Entity EntityID { get; set; }
+
+        public override string ToString()
         {
-            throw new NotImplementedException();
+            return data.ToString();
         }
     }
 }
