@@ -37,6 +37,7 @@ namespace ECS.Scripts.Real
         }
     }
 
+    [ReserveInComponentArray(2000)]
     public struct Foo : IComponentECS
     {
         public int data { get; set; }

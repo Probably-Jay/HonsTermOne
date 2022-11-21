@@ -9,7 +9,7 @@
             var x = 2u;
             while (x < val)
             {
-                x *= x;
+                x *= 2;
             }
 
             return x;

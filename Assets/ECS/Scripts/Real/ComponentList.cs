@@ -19,104 +19,94 @@ namespace ECS.Scripts.Real
     internal class ComponentList<T> : IComponentContainer<T> where T :  struct, IEntityComponentECS
     {
         private readonly NonBoxingList<T> list;
-        public ComponentList(int? initialCapacity)
+        public ComponentList(ulong? initialCapacity)
         {
             list = new NonBoxingList<T>(initialCapacity);
         }
         
         public void Add(T newComponent)
         {
-            var newComponentEntityID = newComponent.EntityID;
-            if (newComponentEntityID.IsNullEntity())
-                throw new EntityNullException();
+            if(ElementAtIndexIsValidComponentOfEntity(newComponent.EntityID))
+                throw new Exception("Entity already has component attached");
             
-            var existingComponentEntityID = list.GetEntityOwningObjectAtIndex(newComponentEntityID.IdIndex);
-
-            if (existingComponentEntityID.IsNullEntity())
-            {
-                list.Add(newComponent);
-                return;
-            }
-
-            if(existingComponentEntityID.IsSupersededBy(newComponentEntityID))
-            {
-                list.Add(newComponent);
-                return;
-            }
-
-            throw new Exception("Entity already has component attached");
+            list.Add(newComponent);
         }
 
         public ref T Get(in Entity entity)
         {
-            var entityOwningObjectAtIndex = list.GetEntityOwningObjectAtIndex(entity.IdIndex);
-            if (entityOwningObjectAtIndex != entity) 
-                return ref list.NullEntity;
-            return ref list.GetByRef(entity.IdIndex);
+            if (!ElementAtIndexIsValidComponentOfEntity(entity)) 
+                return ref NullEntityRef;
+            
+            return ref list[entity.IdIndex];
+        }
+
+        private bool ElementAtIndexIsValidComponentOfEntity(in Entity newComponentEntityID)
+        {
+            if (newComponentEntityID.IsNullEntity())
+                throw new EntityNullException();
+            
+            // component at this entity index is out of array bounds
+            if(list.IndexOutOfRange(newComponentEntityID.IdIndex))
+                return false;
+
+            var existingComponentEntityID = list[newComponentEntityID.IdIndex];
+
+            // component at this entity index is null
+            if (existingComponentEntityID.EntityID.IsNullEntity())
+                return false;
+
+            // component at this entity index was valid, but that entity no longer exists and it's id has been reused
+            if(existingComponentEntityID.EntityID.IsSupersededBy(newComponentEntityID))
+                return false;
+
+            return true;
+        }
+
+
+        private ref T NullEntityRef
+        {
+            get
+            {
+                list[0] = new(); // First element is guaranteed to always be nullEntity
+                return ref list[0];
+            }
         }
     }
     
     internal class NonBoxingList<T> where T : struct, IEntityComponentECS
     {
         private T[] data;
-        public NonBoxingList(int? initialCapacity)
+        private ulong SizeReserved => (ulong)data.Length;
+
+        public NonBoxingList(ulong? initialCapacity)
         {
-            data = new T[initialCapacity ?? 128];
+            data = initialCapacity.HasValue 
+                ? new T[BitOperations.RoundUpToPowerOf2(initialCapacity.Value)] 
+                : new T[128];
         }
-
-        // private NonBoxingList() : this(null)
-        // { }
-
+        
         public void Add(T element)
         {
             var index = element.EntityID.IdIndex;
-            
-            if (index == 0)
-                throw new EntityNullException();
-            
+
             if (IndexOutOfRange(index)) 
                 Reserve(index);
 
             data[index] = element;
         }
 
-        private bool IndexOutOfRange(ulong index)
-        {
-            if (index <= 0)
-                return true;
-            return index >= (ulong)data.Length;
-        }
+        public bool IndexOutOfRange(ulong index) => index >= SizeReserved;
 
         private void Reserve(ulong dataLength)
         {
-            if(dataLength > (ulong)data.Length)
-                Resize(BitOperations.RoundUpToPowerOf2(dataLength));
-        }
-        private void Resize(ulong dataLength) => Array.Resize(ref data, (int)dataLength);
-
-        public ref T GetByRef(ulong index)
-        {
-            if (IndexOutOfRange(index))
-                return ref NullEntity;
-            return ref data[index];
-        } 
-        public Entity GetEntityOwningObjectAtIndex(ulong index)
-        {
-            if (IndexOutOfRange(index))
-                return NullEntity.EntityID; 
-            return data[index].EntityID;
-        }
-
-        public ref T NullEntity
-        {
-            get
+            if(dataLength > SizeReserved)
             {
-                data[0] = new(); // First element is guaranteed to always be nullEntity
-                return ref data[0];
+                Array.Resize(ref data, (int)BitOperations.RoundUpToPowerOf2(dataLength));
             }
         }
 
-        //  public ref T this[ulong index] => ref GetByRef(index);
+        public ref T this[ulong index] => ref data[index];
+        
 
         public Enumerator GetEnumerator() => new(this);
 
@@ -128,15 +118,14 @@ namespace ECS.Scripts.Real
             private long index = -1;
             
             //todo make this valid only
-            public bool MoveNext() => ++index < data.Count;
+            public bool MoveNext() => ++index < (long)data.SizeReserved;
 
             public void Reset() => index = -1;
-            public ref T Current => ref data.GetByRef((ulong)index);
+            public ref T Current => ref data[(ulong)index];
 
             public void Dispose()
             { }
         }
 
-        private long Count => data.Length;
     }
 }

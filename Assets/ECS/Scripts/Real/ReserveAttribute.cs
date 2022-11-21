@@ -4,9 +4,9 @@ namespace ECS.Scripts.Real
 {
     public class ReserveInComponentArray : Attribute
     {
-        public uint ReserveSize { get; }
+        public ulong ReserveSize { get; }
 
-        public ReserveInComponentArray(uint reserveSize)
+        public ReserveInComponentArray(ulong reserveSize)
         {
             ReserveSize = reserveSize;
         }
