@@ -15,7 +15,10 @@ namespace ECS.Scripts.Real
             {
                 var containerClass = typeof(ComponentList<>);
 
-                var containerType = containerClass.MakeGenericType(type);
+                var wrapperClass = typeof(EntityComponentWrapped<>);
+                var wrappedType = wrapperClass.MakeGenericType(type);
+                
+                var containerType = containerClass.MakeGenericType(wrappedType);
 
                 var reserveSize = type.GetCustomAttribute<ReserveInComponentArray>()?.ReserveSize;
 

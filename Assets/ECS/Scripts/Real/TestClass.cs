@@ -29,10 +29,18 @@ namespace ECS.Scripts.Real
             ref var data = ref entity.GetComponent<Foo>();
             Debug.Log(data);
 
-            data.data = 1;
+            data.Component.data++;
             
-            ref var data2 = ref entity.GetComponent<Foo>();
+            ref EntityComponentWrapped<Foo> data2 = ref entity.GetComponent<Foo>();
+            Debug.Log(data2);
+            
+            data2.Component.data++;
+            
+            ref var data3 = ref entity.GetComponent<Foo>();
+            Debug.Log(data3);
             Debug.Log(data);
+            
+            
         }
     }
 
@@ -41,12 +49,6 @@ namespace ECS.Scripts.Real
     {
         public int data { get; set; }
         
-        public Entity EntityID { get; private set; }
-        public void SetEntity(Entity entity)
-        {
-            EntityID = entity;
-        }
-
         public override string ToString()
         {
             return data.ToString();

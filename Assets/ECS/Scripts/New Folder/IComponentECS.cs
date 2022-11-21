@@ -2,6 +2,7 @@
 
 namespace ECS.Scripts.Real
 {
+    // todo rename
     public interface IEntityComponentECS 
     {
         Entity EntityID { get; }
@@ -12,8 +13,7 @@ namespace ECS.Scripts.Real
         GenerationalID GenerationalID { get; }
     }
 
-    public interface IComponentECS : IEntityComponentECS
+    public interface IComponentECS
     {
-        void SetEntity(Entity entity);
     }
 }

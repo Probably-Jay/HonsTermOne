@@ -17,15 +17,14 @@ namespace ECS.Scripts.Real
             return EntityArray.CreateEntity();
         }
 
-        public static ref T AddComponent<T>(in Entity entity) where T : struct, IComponentECS
+        public static ref EntityComponentWrapped<T> AddComponent<T>(in Entity entity) where T : struct, IComponentECS
         {
-            var component = new T();
-            component.SetEntity(entity);
+            var component = new EntityComponentWrapped<T>(new T(), entity);
             ComponentArrays.Add(component);
             return ref GetComponent<T>(entity);
         }
 
-        public static ref T GetComponent<T>(in Entity entity) where T : struct, IComponentECS
+        public static ref EntityComponentWrapped<T> GetComponent<T>(in Entity entity) where T : struct, IComponentECS
         {
             return ref ComponentArrays.Get<T>(entity);
         }
@@ -41,7 +40,7 @@ namespace ECS.Scripts.Real
         {
             World.AddComponent<T>(entity);
         }
-        public static ref T GetComponent<T>(this in Entity entity) where T : struct, IComponentECS
+        public static ref EntityComponentWrapped<T> GetComponent<T>(this in Entity entity) where T : struct, IComponentECS
         {
            return ref World.GetComponent<T>(entity);
         }

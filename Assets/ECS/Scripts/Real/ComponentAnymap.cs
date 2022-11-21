@@ -13,18 +13,18 @@ namespace ECS.Scripts.Real
             mapping = new ComponentMapper().ScanForTypes();
         }
 
-        public void Add<T>(T item) where T : struct, IComponentECS
+        public void Add<T>(EntityComponentWrapped<T> item) where T : struct, IComponentECS
         {
             GetList<T>().Add(item);
         }
 
-        public ref T Get<T>(in Entity entity) where T : struct, IComponentECS
+        public ref EntityComponentWrapped<T> Get<T>(in Entity entity) where T : struct, IComponentECS
         {
             return ref GetList<T>().Get(entity);
         }
         
-        private IComponentContainer<T> GetList<T>() where T : struct, IComponentECS 
-            => (IComponentContainer<T>)mapping[typeof(T)];
+        private IComponentContainer<EntityComponentWrapped<T>> GetList<T>() where T : struct, IComponentECS 
+            => (IComponentContainer<EntityComponentWrapped<T>>)mapping[typeof(T)];
     }
 }
 

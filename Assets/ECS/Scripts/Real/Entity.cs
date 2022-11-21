@@ -42,11 +42,16 @@ namespace ECS.Scripts.Real
         {
             entity = new Entity(GenerationalID.SetIDNull(entity.GenerationalID));
         }
+
+        public override string ToString()
+        {
+            return $"(Entity: {GenerationalID.ToString()})";
+        }
     }
     public static class EntityExtensions
     {
         public static bool IsNullEntity(this Entity entity) => entity.Equals(Entity.NullEntity);
-        public static bool IsNullComponent(this IComponentECS component) => component.EntityID.Equals(Entity.NullEntity);
+        public static bool IsNullComponent<T>(this EntityComponentWrapped<T> component) where T :struct, IComponentECS => component.EntityID.Equals(Entity.NullEntity);
         public static bool IsNullID(this GenerationalID entity) => entity.Equals(GenerationalID.NullID);
 
         public static bool IsSupersededBy(this Entity thisEntity, Entity other)

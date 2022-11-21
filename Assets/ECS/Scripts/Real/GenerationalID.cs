@@ -72,6 +72,11 @@ namespace ECS.Scripts.Real
         {
             return new GenerationalID(generation: entityGenerationalID.Generation);
         }
+        
+        public override string ToString()
+        {
+            return $"(ID: {ID.ToString()}, Gen: {Generation.ToString()})";
+        }
     }
 
     public class NullIDCannotBeUsedException : Exception

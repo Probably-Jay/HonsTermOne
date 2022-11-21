@@ -9,14 +9,37 @@ namespace ECS.Scripts.Real
     internal interface IAnyEntityComponentContainer
     {
     }
-    
-    internal interface IComponentContainer<T> : IAnyEntityComponentContainer where T : struct, IEntityComponentECS
+
+
+    internal interface IEntityComponentWrapped : IEntityComponentECS
+    {
+    }
+
+    public struct EntityComponentWrapped<T> : IEntityComponentWrapped where T : struct, IComponentECS
+    {
+        public Entity EntityID { get; }
+        public T Component;
+
+        public EntityComponentWrapped(T componentEcs, Entity entity)
+        {
+            Component = componentEcs;
+            EntityID = entity;
+        }
+
+        public override string ToString()
+        {
+            return $"Entity component {EntityID.ToString()} component: {Component.ToString()}";
+        }
+    }
+
+
+    internal interface IComponentContainer<T> : IAnyEntityComponentContainer  where T :  struct, IEntityComponentWrapped
     {
         void Add(T newComponent);
         ref T Get(in Entity entity);
     }
 
-    internal class ComponentList<T> : IComponentContainer<T> where T :  struct, IEntityComponentECS
+    internal class ComponentList<T> : IComponentContainer<T> where T : struct, IEntityComponentWrapped
     {
         private readonly NonBoxingList<T> list;
         public ComponentList(ulong? initialCapacity)
