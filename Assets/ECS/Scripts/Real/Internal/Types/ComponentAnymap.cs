@@ -26,11 +26,8 @@ namespace ECS.Scripts.Real.Internal.Types
         public void RemoveComponentFrom<T>(in Entity entity) where T : struct, IComponentData
         {
             var componentContainer = GetList<T>();
-            RemoveComponentFromEntity(componentContainer, entity);
+            componentContainer.RemoveFrom(entity);
         }
-
-        private static void RemoveComponentFromEntity(IAnyEntityComponentContainer componentContainer, Entity entity) 
-            => componentContainer.RemoveFrom(entity);
 
         public ref Component<T> Get<T>(in Entity entity) where T : struct, IComponentData
         {
@@ -55,32 +52,46 @@ namespace ECS.Scripts.Real.Internal.Types
             }
             catch (KeyNotFoundException)
             {
-                throw new MissingComponentTypeException<T>();
+                throw new MissingComponentTypeException(typeof(T));
+            }     
+            catch (InvalidCastException)
+            {
+                throw new MissingComponentTypeException(typeof(T));
             } 
             catch (NullReferenceException)
             {
-                throw new MissingComponentTypeException<T>();
+                throw new MissingComponentTypeException(typeof(T));
             }
-        }
+        }  
+        
 
         public void RemoveAllComponentsFrom(in Entity entity)
         {
             foreach (var (_, componentContainer) in mapping)
             {
-                RemoveComponentFromEntity(componentContainer, entity);
+                componentContainer.RemoveFrom(entity);
             }
         }
 
-        public IEnumerable<Type> GetAllRegisteredEntityTypes() => mapping.Keys;
 
-       
+        public IReadOnlyCollection<Type> GetTypesOfAllAttachedComponents(in Entity entity)
+        {
+            List<Type> types = new();
+            foreach (var (type, componentContainer) in mapping)
+            {
+                if(componentContainer.IsValidComponentOfEntity(entity)) 
+                    types.Add(type);
+            }
+
+            return types;
+        }
     }
 
     
 
-    internal class MissingComponentTypeException<T> : Exception
+    internal class MissingComponentTypeException : Exception
     {
-        public MissingComponentTypeException() : base($"Type {typeof(T)} was not found during registration. " +
+        public MissingComponentTypeException(Type t) : base($"Type {t} was not found during registration. " +
                                                       $"Please ensure all types used exist within assemblies passed into {nameof(TypeRegistry)}.{nameof(World.TypeRegistry.RegisterTypesFromAssembliesContaining)}().")
         { }
     }

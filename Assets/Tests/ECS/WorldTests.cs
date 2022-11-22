@@ -8,12 +8,18 @@ namespace Tests.ECS
     public struct TestComponent : IComponentData 
     {
     
+    }  
+    
+    public struct OtherTestComponent : IComponentData 
+    {
+    
     }
 
     static class TypeRegistry
     {
         public static readonly Type[] AllIComponentTypes = {
             typeof(TestComponent),
+            typeof(OtherTestComponent),
             typeof(TestComponentValData)
         }; 
         

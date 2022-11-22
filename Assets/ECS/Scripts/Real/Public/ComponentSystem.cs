@@ -1,6 +1,7 @@
 ﻿namespace ECS.Scripts.Real.Public
 {
-    public abstract class System
+    public interface ISystemLogic
     {
+        void Update(float deltaTime);
     }
 }

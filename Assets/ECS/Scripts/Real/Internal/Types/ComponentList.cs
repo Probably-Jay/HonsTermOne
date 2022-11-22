@@ -9,6 +9,8 @@ namespace ECS.Scripts.Real.Internal.Types
 {
     internal interface IAnyEntityComponentContainer
     {
+        Type ContainedType { get; }
+        bool IsValidComponentOfEntity(in Entity entity);
         void RemoveFrom(in Entity entity);
     }
 
@@ -25,10 +27,12 @@ namespace ECS.Scripts.Real.Internal.Types
         {
             list = new NonBoxingList<T>(initialCapacity);
         }
-        
+
+        public Type ContainedType => typeof(T);
+
         public void Add(T newComponent)
         {
-            if(ElementAtIndexIsValidComponentOfEntity(newComponent.Entity))
+            if(IsValidComponentOfEntity(newComponent.Entity))
                 throw new Exception("Entity already has component attached");
             
             list.Add(newComponent);
@@ -36,7 +40,7 @@ namespace ECS.Scripts.Real.Internal.Types
 
         public ref T GetFrom(in Entity entity)
         {
-            if (!ElementAtIndexIsValidComponentOfEntity(entity)) 
+            if (!IsValidComponentOfEntity(entity)) 
                 return ref NullEntityRef;
             
             return ref list[entity.EntityIDIndex];
@@ -44,14 +48,15 @@ namespace ECS.Scripts.Real.Internal.Types
 
         public void RemoveFrom(in Entity entity)
         {
-            if (!ElementAtIndexIsValidComponentOfEntity(entity))
+            if (!IsValidComponentOfEntity(entity))
                 return;
             
             ref var component = ref list[entity.EntityIDIndex];
             component.Destroy();
         }
 
-        private bool ElementAtIndexIsValidComponentOfEntity(in Entity newComponentEntityID)
+
+        public bool IsValidComponentOfEntity(in Entity newComponentEntityID)
         {
             if (newComponentEntityID.IsNullEntity())
                 throw new EntityNullException();

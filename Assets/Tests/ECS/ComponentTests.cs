@@ -40,6 +40,20 @@ namespace Tests.ECS
             entity.AddComponent<TestComponentValData>();
             Assert.True(entity.HasComponent<TestComponentValData>());
         }
+         
+        [Test]
+        public void CreateMultipleComponent()
+        {
+            var types = TypeList.Create()
+                .AddType<TestComponent>()
+                .AddType<OtherTestComponent>()
+                .Complete();
+
+            entity.AddComponents(types);
+            
+            var typesOnEntity = entity.GetAllAttachedComponentTypes();
+            CollectionAssert.AreEquivalent(typesOnEntity,types.Types);
+        }
         
         
         [Test]

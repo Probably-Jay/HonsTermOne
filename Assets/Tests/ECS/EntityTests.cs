@@ -2,6 +2,7 @@
 using ECS.Scripts.Real.Internal.Extentions;
 using ECS.Scripts.Real.Public;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace Tests.ECS
 {
@@ -29,6 +30,28 @@ namespace Tests.ECS
             var entity = world.CreateEntity();
             
             Assert.IsTrue(entity.ExistsInWorld());
+        }   
+        
+        [Test]
+        public void CreatedEntityHasType()
+        {
+            var entity = world.CreateEntity<TestComponent>();
+            
+            Assert.IsTrue(entity.HasComponent<TestComponent>());
+        } 
+        
+        [Test]
+        public void CreatedEntityHasTypes()
+        {
+            var types = TypeList.Create()
+                .AddType<TestComponent>()
+                .AddType<OtherTestComponent>()
+                .Complete();
+            
+            var entity = world.CreateEntity(types);
+
+            var typesOnEntity = entity.GetAllAttachedComponentTypes();
+            CollectionAssert.AreEquivalent(typesOnEntity,types.Types);
         }
         
         [Test]

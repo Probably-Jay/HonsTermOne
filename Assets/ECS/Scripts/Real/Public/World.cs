@@ -37,15 +37,27 @@ namespace ECS.Scripts.Real.Public
             SystemList.RegisterTypes(TypeRegistry);
         }
 
-
-        // public IEnumerable<Type> GetAllRegisteredComponentTypes() => ComponentArrays.GetAllRegisteredEntityTypes();
-
         public Entity CreateEntity()
         {
             return EntityArray.CreateEntity(this);
         }
+        
+        public Entity CreateEntity<T>() where T : struct, IComponentData
+        {
+            var entity = CreateEntity();
+            AddComponent<T>(entity);
+            return entity;
+        }   
+        
+        public Entity CreateEntity(TypeList types)
+        {
+            var entity = CreateEntity();
+            AddComponents(entity, types);
+            return entity;
+        }
 
-        public void DestroyEntity(ref Entity entity)
+
+        internal void DestroyEntity(ref Entity entity)
         {
             if(entity.IsNullEntity()) 
                 return;
@@ -63,9 +75,23 @@ namespace ECS.Scripts.Real.Public
             addComponent.AssertIsNotNull();
         }
 
-        public void RemoveComponent<T>(in Entity entity) where T : struct, IComponentData
+        internal void AddComponents(Entity entity, TypeList types)
         {
-            ComponentArrays.RemoveComponentFrom<T>(entity);
+            foreach (var type in types.Types)
+            {
+                try
+                {
+                    var method = GetType()
+                        .GetMethod(nameof(AddComponent), BindingFlags.Instance | BindingFlags.NonPublic)
+                        !.MakeGenericMethod(type)!;
+
+                    method!.Invoke(this, new object[] { entity });
+                }
+                catch (NullReferenceException)
+                {
+                    throw new InvalidTypeListException();
+                }
+            }
         }
 
         internal ref Component<T> GetComponent<T>(in Entity entity) where T : struct, IComponentData
@@ -76,28 +102,34 @@ namespace ECS.Scripts.Real.Public
             return ref component;
         }
 
+        internal void RemoveComponent<T>(in Entity entity) where T : struct, IComponentData
+        {
+            ComponentArrays.RemoveComponentFrom<T>(entity);
+        }
 
         internal bool EntityExistsWithinWorld(Entity entity)
         {
             return EntityArray.ContainsEntity(entity);
         }
 
-        public bool EntityContainsComponent<T>(in Component<T> component) where T : struct, IComponentData
+        internal bool EntityContainsComponent<T>(in Component<T> component) where T : struct, IComponentData
         {
             return EntityExistsWithinWorld(component.Entity) && ComponentArrays.ContainsComponent(component);
         }
 
-        public bool EntityContainsComponent<T>(in Entity entity) where T : struct, IComponentData
+        internal bool EntityContainsComponent<T>(in Entity entity) where T : struct, IComponentData
         {
             return EntityExistsWithinWorld(entity) && ComponentArrays.ContainsComponent<T>(entity);
         }
 
-       
+        public IReadOnlyCollection<Type> GetAllAttachedComponentTypes(in Entity entity)
+        {
+            entity.AssertIsNotNull();
+            return ComponentArrays.GetTypesOfAllAttachedComponents(entity);
+        }
     }
 
-    
- 
-    
+
     public class TypeRegistry
     {
         public IReadOnlyCollection<TypeInfo> ComponentTypes { get; private set; }
@@ -108,13 +140,13 @@ namespace ECS.Scripts.Real.Public
         public void RegisterTypesFromCurrentlyExecutingAssembly()
         {
             ComponentTypes = AssemblyScanner<IComponentData>.ScanFromCurrentlyExecutingAssembly().ToList();
-            SystemTypes = AssemblyScanner<System>.ScanFromCurrentlyExecutingAssembly().ToList();
+            SystemTypes = AssemblyScanner<ISystemLogic>.ScanFromCurrentlyExecutingAssembly().ToList();
             OnUpdatedTypeRegistry?.Invoke();
         }
         public void RegisterTypesFromAssemblyContaining<TMarker>()
         {
             ComponentTypes = AssemblyScanner<IComponentData>.ScanForFromAssemblyContaining<TMarker>().ToList();;
-            SystemTypes = AssemblyScanner<System>.ScanForFromAssemblyContaining<TMarker>().ToList();
+            SystemTypes = AssemblyScanner<ISystemLogic>.ScanForFromAssemblyContaining<TMarker>().ToList();
             OnUpdatedTypeRegistry?.Invoke();
         } 
         public void RegisterTypesFromAssembliesContaining(Type assemblyMarker, params Type[] otherAssemblyMarkers)

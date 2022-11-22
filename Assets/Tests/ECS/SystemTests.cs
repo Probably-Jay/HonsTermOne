@@ -5,9 +5,12 @@ using UnityEditorInternal;
 namespace Tests.ECS
 {
 
-    public class TestSystem : global::ECS.Scripts.Real.Public.System
+    public class TestSystem : ISystemLogic
     {
-        
+        public void Update(float deltaTime)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class SystemTests
@@ -25,7 +28,7 @@ namespace Tests.ECS
         [SetUp]
         public void SetUp()
         {
-            system = new TestSystem();
+      
         }
 
         [Test]

@@ -23,7 +23,7 @@ namespace ECS.Scripts.Real.Public
         private Entity entity;
         public ulong EntityIDIndex => Entity.EntityIDIndex;
 
-        public Component(T componentDataEcs, Entity entity)
+        internal Component(T componentDataEcs, Entity entity)
         {
             ComponentData = componentDataEcs;
             this.entity = entity;
