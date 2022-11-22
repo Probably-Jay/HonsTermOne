@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ECS.Scripts.Real.Interfaces;
+using ECS.Scripts.Real.Types;
+using ECS.Scripts.Real.Types.Attributes;
 
-namespace ECS.Scripts.Real
+namespace ECS.Scripts.Real.Internal.Types
 {
     internal class ComponentMapper
     {
@@ -15,7 +18,7 @@ namespace ECS.Scripts.Real
             {
                 var containerClass = typeof(ComponentList<>);
 
-                var wrapperClass = typeof(EntityComponentWrapped<>);
+                var wrapperClass = typeof(Component<>);
                 var wrappedType = wrapperClass.MakeGenericType(type);
                 
                 var containerType = containerClass.MakeGenericType(wrappedType);
@@ -48,7 +51,7 @@ namespace ECS.Scripts.Real
                 // Get all concrete types implementing the IComponentECS interface
                 componentTypes = assembly.DefinedTypes
                     .Where(x =>
-                        typeof(IComponentECS).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
+                        typeof(IComponentData).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
             }
 
             return componentTypes;

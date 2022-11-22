@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ECS.Scripts.Real
+namespace ECS.Scripts.Real.Types.Attributes
 {
     public class ReserveInComponentArray : Attribute
     {

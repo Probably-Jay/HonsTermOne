@@ -4,60 +4,59 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using ECS.Scripts.Real;
 using UnityEngine;
 
-
-
-
-public class ECStest : MonoBehaviour
+namespace ECS.Scripts.New_Folder
 {
-
-   private List<ContiguousData> data;
-
-  // private ComponentArrayContainer collection;
-    // Start is called before the first frame update
-    void Start()
+    public class ECStest : MonoBehaviour
     {
-        // var entityData = new ContiguousData
-        // {
-        //     [10] = 10
-        // };
-        // data.Add(entityData);
-    }
 
-    void Update()
-    {
+        private List<ContiguousData> data;
+
+        // private ComponentArrayContainer collection;
+        // Start is called before the first frame update
+        void Start()
+        {
+            // var entityData = new ContiguousData
+            // {
+            //     [10] = 10
+            // };
+            // data.Add(entityData);
+        }
+
+        void Update()
+        {
         
-    }
-}
-
-internal unsafe struct ContiguousData
-{
-    public const int Size = 100;
-    
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = Size)]
-    private fixed byte data[Size];
-
-    public List<int> A;
-    
-    public byte this[int index]
-    {
-        get
-        {
-            RangeAssertion(index);
-            return data[index];
-        }
-        set
-        {
-            RangeAssertion(index);
-            data[index]= value;
         }
     }
 
-    private static void RangeAssertion(int index)
+    internal unsafe struct ContiguousData
     {
-        if (index is < 0 or >= 100)
-            throw new IndexOutOfRangeException();
+        public const int Size = 100;
+    
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Size)]
+        private fixed byte data[Size];
+
+        public List<int> A;
+    
+        public byte this[int index]
+        {
+            get
+            {
+                RangeAssertion(index);
+                return data[index];
+            }
+            set
+            {
+                RangeAssertion(index);
+                data[index]= value;
+            }
+        }
+
+        private static void RangeAssertion(int index)
+        {
+            if (index is < 0 or >= 100)
+                throw new IndexOutOfRangeException();
+        }
     }
 }

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using ECS.Scripts.New_Folder;
+﻿using ECS.Scripts.Real.Interfaces;
+using ECS.Scripts.Real.Internal.Extentions;
+using ECS.Scripts.Real.Types;
+using ECS.Scripts.Real.Types.Attributes;
 using UnityEngine;
 
-namespace ECS.Scripts.Real
+namespace ECS.Scripts.New_Folder
 {
     public class TestClass : MonoBehaviour
     {
@@ -24,17 +24,18 @@ namespace ECS.Scripts.Real
         private void Test()
         {
             var entity = World.CreateEntity();
-            entity.AddComponent<Foo>();            
+            entity.AddComponent<Foo>();
+            
 
             ref var data = ref entity.GetComponent<Foo>();
             Debug.Log(data);
 
-            data.Component.data++;
+            data.Data = new Foo{data = 1};
             
-            ref EntityComponentWrapped<Foo> data2 = ref entity.GetComponent<Foo>();
+            ref var data2 = ref entity.GetComponent<Foo>();
             Debug.Log(data2);
             
-            data2.Component.data++;
+            data2.Data.data++;
             
             ref var data3 = ref entity.GetComponent<Foo>();
             Debug.Log(data3);
@@ -45,7 +46,7 @@ namespace ECS.Scripts.Real
     }
 
     [ReserveInComponentArray(2000)]
-    public struct Foo : IComponentECS
+    public struct Foo : IComponentData
     {
         public int data { get; set; }
         

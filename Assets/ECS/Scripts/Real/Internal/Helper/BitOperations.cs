@@ -1,4 +1,4 @@
-﻿namespace ECS.Scripts.Real.Helper
+﻿namespace ECS.Scripts.Real.Internal.Helper
 {
     internal static class BitOperations
     {

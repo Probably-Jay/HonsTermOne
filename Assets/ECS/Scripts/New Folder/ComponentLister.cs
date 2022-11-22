@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using ECS.Scripts.Real;
+using ECS.Scripts.Real.Interfaces;
+using ECS.Scripts.Real.Types;
 using UnityEngine;
 
 namespace ECS.Scripts.New_Folder
@@ -105,7 +107,7 @@ namespace ECS.Scripts.New_Folder
         // }
     }
 
-    public class ComponentArray<T> where T : struct,  IComponentECS 
+    public class ComponentArray<T> where T : struct,  IComponentData 
     {
         private T[] data;
 
@@ -135,23 +137,23 @@ namespace ECS.Scripts.New_Folder
     }
 
 
-    public struct MyComponent : IComponentECS
+    public struct MyComponentData : IComponentData
     {
   
         public int Data { get; set; }
-        public bool Equals(MyComponent other)
+        public bool Equals(MyComponentData other)
         {
             throw new NotImplementedException();
         }
 
-        public bool Equals(IComponentECS other)
+        public bool Equals(IComponentData other)
         {
             throw new NotImplementedException();
         }
 
         public override bool Equals(object obj)
         {
-            return obj is MyComponent other && Equals(other);
+            return obj is MyComponentData other && Equals(other);
         }
 
         public override int GetHashCode()
