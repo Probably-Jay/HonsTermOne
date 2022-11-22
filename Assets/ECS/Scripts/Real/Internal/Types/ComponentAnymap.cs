@@ -47,6 +47,7 @@ namespace ECS.Scripts.Real.Internal.Types
             }
         }
 
+        public ICollection<Type> GetAllRegisteredEntityTypes() => mapping.Keys;
     }
 
     internal class MissingComponentTypeException<T> : Exception

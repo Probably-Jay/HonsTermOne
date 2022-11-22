@@ -1,4 +1,5 @@
-﻿using ECS.Scripts.Real.Internal.Extentions;
+﻿using System.Collections.Generic;
+using ECS.Scripts.Real.Internal.Extentions;
 using ECS.Scripts.Real.Internal.Interfaces;
 using ECS.Scripts.Real.Internal.Types;
 
@@ -19,6 +20,9 @@ namespace ECS.Scripts.Real.Public
         {
             ComponentArrays.Init<TMarker>();
         }
+
+        public ICollection<System.Type> GetAllRegisteredComponentTypes() => ComponentArrays.GetAllRegisteredEntityTypes();
+
         public Entity CreateEntity()
         {
             return EntityArray.CreateEntity(this);
