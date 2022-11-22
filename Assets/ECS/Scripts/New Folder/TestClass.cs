@@ -1,7 +1,7 @@
-﻿using ECS.Scripts.Real.Interfaces;
-using ECS.Scripts.Real.Internal.Extentions;
-using ECS.Scripts.Real.Types;
-using ECS.Scripts.Real.Types.Attributes;
+﻿using ECS.Scripts.Real.Internal.Extentions;
+using ECS.Scripts.Real.Internal.Interfaces;
+using ECS.Scripts.Real.Public;
+using ECS.Scripts.Real.Public.Attributes;
 using UnityEngine;
 
 namespace ECS.Scripts.New_Folder
@@ -23,25 +23,31 @@ namespace ECS.Scripts.New_Folder
 
         private void Test()
         {
-            var entity = World.CreateEntity();
+            Entity entity = World.CreateEntity();
+            
             entity.AddComponent<Foo>();
             
 
             ref var data = ref entity.GetComponent<Foo>();
             Debug.Log(data);
 
-            data.Data = new Foo{data = 1};
+            data.ComponentData = new Foo{data = 1};
             
             ref var data2 = ref entity.GetComponent<Foo>();
             Debug.Log(data2);
             
-            data2.Data.data++;
+            entity.DestroyFromWorld();
+
+            
+            data2.ComponentData.data++;
             
             ref var data3 = ref entity.GetComponent<Foo>();
             Debug.Log(data3);
             Debug.Log(data);
             
-            
+
+            Debug.Log(data.Exists);
+
         }
     }
 

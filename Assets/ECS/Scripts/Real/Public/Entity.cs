@@ -2,7 +2,7 @@
 using ECS.Scripts.Real.Internal.Interfaces;
 using ECS.Scripts.Real.Internal.Types;
 
-namespace ECS.Scripts.Real.Types
+namespace ECS.Scripts.Real.Public
 {
     public readonly partial struct Entity : IEntity, IEquatable<Entity>
     {

@@ -1,5 +1,5 @@
 ﻿using ECS.Scripts.Real.Internal.Extentions;
-using ECS.Scripts.Real.Types;
+using Entity = ECS.Scripts.Real.Public.Entity;
 
 namespace ECS.Scripts.Real.Internal.Types
 {
@@ -42,9 +42,10 @@ namespace ECS.Scripts.Real.Internal.Types
             return entity;
         }
 
-        public void DestroyEntity(in Entity entity)
+        public void DestroyEntity(ref Entity entity)
         {
             ref var actualEntity = ref GetEntity(entity);
+            Entity.EntityFactory.Destroy(ref entity);
             Entity.EntityFactory.Destroy(ref actualEntity);
         }
 

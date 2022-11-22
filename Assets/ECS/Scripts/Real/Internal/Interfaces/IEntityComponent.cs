@@ -1,4 +1,4 @@
-﻿using ECS.Scripts.Real.Types;
+﻿using Entity = ECS.Scripts.Real.Public.Entity;
 
 namespace ECS.Scripts.Real.Internal.Interfaces
 {
@@ -12,5 +12,6 @@ namespace ECS.Scripts.Real.Internal.Interfaces
     internal interface IComponent : IEntityComponent
     {
         Entity Entity { get; }
+        void Destroy();
     }
 }

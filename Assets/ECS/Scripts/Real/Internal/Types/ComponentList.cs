@@ -3,18 +3,19 @@ using ECS.Scripts.Real.Internal.Exceptions;
 using ECS.Scripts.Real.Internal.Extentions;
 using ECS.Scripts.Real.Internal.Helper;
 using ECS.Scripts.Real.Internal.Interfaces;
-using ECS.Scripts.Real.Types;
+using Entity = ECS.Scripts.Real.Public.Entity;
 
 namespace ECS.Scripts.Real.Internal.Types
 {
     internal interface IAnyEntityComponentContainer
     {
+        void RemoveFrom(in Entity entity);
     }
 
     internal interface IComponentContainer<T> : IAnyEntityComponentContainer  where T :  struct, IComponent
     {
         void Add(T newComponent);
-        ref T Get(in Entity entity);
+        ref T GetFrom(in Entity entity);
     }
 
     internal class ComponentList<T> : IComponentContainer<T> where T : struct, IComponent
@@ -33,12 +34,21 @@ namespace ECS.Scripts.Real.Internal.Types
             list.Add(newComponent);
         }
 
-        public ref T Get(in Entity entity)
+        public ref T GetFrom(in Entity entity)
         {
             if (!ElementAtIndexIsValidComponentOfEntity(entity)) 
                 return ref NullEntityRef;
             
             return ref list[entity.EntityIDIndex];
+        }
+
+        public void RemoveFrom(in Entity entity)
+        {
+            if (!ElementAtIndexIsValidComponentOfEntity(entity))
+                return;
+            
+            ref var component = ref list[entity.EntityIDIndex];
+            component.Destroy();
         }
 
         private bool ElementAtIndexIsValidComponentOfEntity(in Entity newComponentEntityID)

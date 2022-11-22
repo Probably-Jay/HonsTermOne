@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using ECS.Scripts.Real;
-using ECS.Scripts.Real.Interfaces;
-using ECS.Scripts.Real.Types;
+using ECS.Scripts.Real.Internal.Interfaces;
 using UnityEngine;
+using Entity = ECS.Scripts.Real.Public.Entity;
 
 namespace ECS.Scripts.New_Folder
 {

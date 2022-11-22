@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using ECS.Scripts.Real.Interfaces;
-using ECS.Scripts.Real.Types;
+using ECS.Scripts.Real.Internal.Interfaces;
+using ECS.Scripts.Real.Public;
+using Entity = ECS.Scripts.Real.Public.Entity;
 
 namespace ECS.Scripts.Real.Internal.Types
 {
@@ -18,10 +19,12 @@ namespace ECS.Scripts.Real.Internal.Types
         {
             GetList<T>().Add(item);
         }
+        private static void Remove(Entity entity, IAnyEntityComponentContainer componentContainer) 
+            => componentContainer.RemoveFrom(entity);
 
         public ref Component<T> Get<T>(in Entity entity) where T : struct, IComponentData
         {
-            return ref GetList<T>().Get(entity);
+            return ref GetList<T>().GetFrom(entity);
         }
 
         private IComponentContainer<Component<T>> GetList<T>() where T : struct, IComponentData
@@ -35,6 +38,15 @@ namespace ECS.Scripts.Real.Internal.Types
                 throw new MissingComponentTypeException<T>();
             }
         }
+
+        public void RemoveAllComponentsFrom(in Entity entity)
+        {
+            foreach (var (_, componentContainer) in mapping)
+            {
+                Remove(entity, componentContainer);
+            }
+        }
+
     }
 
     internal class MissingComponentTypeException<T> : Exception

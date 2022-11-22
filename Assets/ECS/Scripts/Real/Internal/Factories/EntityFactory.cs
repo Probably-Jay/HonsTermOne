@@ -3,7 +3,7 @@ using ECS.Scripts.Real.Internal.Extentions;
 using ECS.Scripts.Real.Internal.Types;
 
 // ReSharper disable once CheckNamespace
-namespace ECS.Scripts.Real.Types
+namespace ECS.Scripts.Real.Public
 {
     public readonly partial struct Entity
     {

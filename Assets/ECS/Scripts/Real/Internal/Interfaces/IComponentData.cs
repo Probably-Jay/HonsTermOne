@@ -1,4 +1,4 @@
-﻿namespace ECS.Scripts.Real.Interfaces
+﻿namespace ECS.Scripts.Real.Internal.Interfaces
 {
     public interface IComponentData
     {
