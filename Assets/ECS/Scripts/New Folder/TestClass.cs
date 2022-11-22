@@ -47,7 +47,7 @@ namespace ECS.Scripts.New_Folder
             Debug.Log(data);
             
 
-            Debug.Log(data.Exists);
+            //Debug.Log(data.Exists);
 
         }
     }

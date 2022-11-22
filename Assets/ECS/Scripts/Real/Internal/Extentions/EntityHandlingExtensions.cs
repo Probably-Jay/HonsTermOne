@@ -16,6 +16,12 @@ namespace ECS.Scripts.Real.Internal.Extentions
                 throw new EntityNullException();
         }
         public static bool IsNullComponent<T>(this Component<T> component) where T :struct, IComponentData => component.Entity.Equals(Entity.EntityFactory.NullEntity);
+        internal static void AssertIsNotNull<T>(this Component<T> component) where T : struct, IComponentData
+        {
+            if (component.IsNullComponent())
+                throw new ComponentNullException();
+        }
+        
         internal static bool IsNullID(this GenerationalID entity) => entity.Equals(GenerationalID.NullID);
 
         internal static bool IsSupersededBy(this Entity thisEntity, Entity other)

@@ -40,16 +40,35 @@ namespace ECS.Scripts.Real.Public
             entity.AssertIsNotNull();
             var component = new Component<T>(new T(), entity);
             ComponentArrays.Add(component);
-            return ref GetComponent<T>(entity);
+            
+            ref var addComponent = ref GetComponent<T>(entity);
+            addComponent.AssertIsNotNull();
+            return ref addComponent;
+        }
+
+        public void RemoveComponent<T>(in Entity entity) where T : struct, IComponentData
+        {
+            ComponentArrays.RemoveComponentFrom<T>(entity);
         }
 
         internal ref Component<T> GetComponent<T>(in Entity entity) where T : struct, IComponentData
         {
             entity.AssertIsNotNull();
-            return ref ComponentArrays.Get<T>(entity);
+            ref var component = ref ComponentArrays.Get<T>(entity);
+            component.AssertIsNotNull();
+            return ref component;
         }
 
-        
+
+        internal bool EntityExistsWithinWorld(Entity entity)
+        {
+            return EntityArray.ContainsEntity(entity);
+        }
+
+        public bool EntityContainsComponent<T>(in Component<T> component) where T : struct, IComponentData
+        {
+            return EntityExistsWithinWorld(component.Entity) && ComponentArrays.ContainsComponent(component);
+        }
     }
     
 

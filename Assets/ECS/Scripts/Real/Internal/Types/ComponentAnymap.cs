@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ECS.Scripts.Real.Internal.Extentions;
 using ECS.Scripts.Real.Internal.Interfaces;
 using ECS.Scripts.Real.Public;
 using Entity = ECS.Scripts.Real.Public.Entity;
@@ -8,7 +9,7 @@ namespace ECS.Scripts.Real.Internal.Types
 {
     internal class ComponentAnymap
     {
-        private Dictionary<Type, IAnyEntityComponentContainer> mapping;
+        private Dictionary<Type, IAnyEntityComponentContainer> mapping = new();
 
         public void Init<TMarker>()
         {
@@ -19,12 +20,24 @@ namespace ECS.Scripts.Real.Internal.Types
         {
             GetList<T>().Add(item);
         }
-        private static void Remove(Entity entity, IAnyEntityComponentContainer componentContainer) 
+
+        public void RemoveComponentFrom<T>(in Entity entity) where T : struct, IComponentData
+        {
+            var componentContainer = GetList<T>();
+            RemoveComponentFromEntity(componentContainer, entity);
+        }
+
+        private static void RemoveComponentFromEntity(IAnyEntityComponentContainer componentContainer, Entity entity) 
             => componentContainer.RemoveFrom(entity);
 
         public ref Component<T> Get<T>(in Entity entity) where T : struct, IComponentData
         {
             return ref GetList<T>().GetFrom(entity);
+        }
+
+        public bool ContainsComponent<T>(in Component<T> component) where T : struct, IComponentData
+        {
+            return !Get<T>(component.Entity).IsNullComponent();
         }
 
         private IComponentContainer<Component<T>> GetList<T>() where T : struct, IComponentData
@@ -43,7 +56,7 @@ namespace ECS.Scripts.Real.Internal.Types
         {
             foreach (var (_, componentContainer) in mapping)
             {
-                Remove(entity, componentContainer);
+                RemoveComponentFromEntity(componentContainer, entity);
             }
         }
 

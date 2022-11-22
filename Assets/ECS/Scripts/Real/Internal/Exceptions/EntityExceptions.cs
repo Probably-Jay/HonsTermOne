@@ -11,6 +11,11 @@ namespace ECS.Scripts.Real.Internal.Exceptions
     {
         public EntityNullException() : base("The entity id associated with this object is null.")
         { }
+    } 
+    public class ComponentNullException : Exception
+    {
+        public ComponentNullException() : base("The entity does not contain this component.")
+        { }
     }
     public class EntityIDMismatchException : Exception
     {

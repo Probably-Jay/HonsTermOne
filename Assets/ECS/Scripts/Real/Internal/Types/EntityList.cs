@@ -56,7 +56,10 @@ namespace ECS.Scripts.Real.Internal.Types
             
             return ref list[entity.EntityIDIndex];
         }
-       
+
+        public bool ContainsEntity(Entity entity) 
+            => !GetEntity(entity).IsNullEntity();
+
         private bool EntityIsValid(in Entity entity)
         {
             if (entity.IsNullEntity())
@@ -78,8 +81,8 @@ namespace ECS.Scripts.Real.Internal.Types
 
             return true;
         }
-        
-        
+
+
         private ref Entity NullEntityRef
         {
             get
