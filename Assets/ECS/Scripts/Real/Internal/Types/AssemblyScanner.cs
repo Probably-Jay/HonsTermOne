@@ -6,9 +6,9 @@ using ECS.Scripts.Real.Internal.Interfaces;
 
 namespace ECS.Scripts.Real.Internal.Types
 {
-    internal static class AssemblyScanner<T>
+    internal static class AssemblyScanner<TScannedFor>
     {
-        internal static IEnumerable<TypeInfo> ScanForFromAssembly()
+        internal static IEnumerable<TypeInfo> ScanFromCurrentlyExecutingAssembly()
         {
             return Scan(Assembly.GetExecutingAssembly());
         }
@@ -31,7 +31,7 @@ namespace ECS.Scripts.Real.Internal.Types
                 // Get all concrete types implementing the IComponentECS interface
                 componentTypes = assembly.DefinedTypes
                     .Where(x =>
-                        typeof(T).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
+                        typeof(TScannedFor).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
             }
 
             return componentTypes;

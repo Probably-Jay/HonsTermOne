@@ -15,6 +15,10 @@ namespace Tests.ECS
         public static readonly Type[] AllIComponentTypes = {
             typeof(TestComponent),
             typeof(TestComponentValData)
+        }; 
+        
+        public static readonly Type[] AllSystemTypes = {
+            typeof(TestSystem),
         };
     }
     public class WorldTests
@@ -35,13 +39,23 @@ namespace Tests.ECS
         [Test]
         public void RegisterComponent()
         {
-            world.RegisterEntityTypes<TestComponent>();
-
-            var registeredComponents = world.GetAllRegisteredComponentTypes();
+            World.TypeRegistry.RegisterTypesFromAssemblyContaining<IAssemblyMarker>();
+            
+            var registeredComponents = World.TypeRegistry.ComponentTypes;
         
             CollectionAssert.AreEquivalent(TypeRegistry.AllIComponentTypes, registeredComponents);
         }
-    
+     
+        [Test]
+        public void RegisterSystems()
+        {
+            World.TypeRegistry.RegisterTypesFromAssemblyContaining<IAssemblyMarker>();
+
+            var registeredComponents = World.TypeRegistry.SystemTypes;
+        
+            CollectionAssert.AreEquivalent(TypeRegistry.AllSystemTypes, registeredComponents);
+        }
+        
     }
 }
 

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using ECS.Scripts.Real.Internal.Extentions;
 using ECS.Scripts.Real.Internal.Interfaces;
 using ECS.Scripts.Real.Public;
@@ -9,13 +11,13 @@ namespace ECS.Scripts.Real.Internal.Types
 {
     internal class ComponentAnymap
     {
-        private Dictionary<Type, IAnyEntityComponentContainer> mapping = new();
-
-        public void Init<TMarker>()
+        private IReadOnlyDictionary<Type, IAnyEntityComponentContainer> mapping;
+        
+        public void RegisterTypes(TypeRegistry typeRegistry)
         {
-            mapping = new ComponentMapper().ScanForTypes<TMarker>();
+            mapping = new ComponentMapper().CreateComponentMapping(typeRegistry);
         }
-
+        
         public void Add<T>(Component<T> item) where T : struct, IComponentData
         {
             GetList<T>().Add(item);
@@ -54,6 +56,10 @@ namespace ECS.Scripts.Real.Internal.Types
             catch (KeyNotFoundException)
             {
                 throw new MissingComponentTypeException<T>();
+            } 
+            catch (NullReferenceException)
+            {
+                throw new MissingComponentTypeException<T>();
             }
         }
 
@@ -65,13 +71,17 @@ namespace ECS.Scripts.Real.Internal.Types
             }
         }
 
-        public ICollection<Type> GetAllRegisteredEntityTypes() => mapping.Keys;
+        public IEnumerable<Type> GetAllRegisteredEntityTypes() => mapping.Keys;
+
+       
     }
+
+    
 
     internal class MissingComponentTypeException<T> : Exception
     {
         public MissingComponentTypeException() : base($"Type {typeof(T)} was not found during registration. " +
-                                                      $"Please ensure all types used exist within assemblies passed into {nameof(World)}.{nameof(World.RegisterEntityTypes)}().")
+                                                      $"Please ensure all types used exist within assemblies passed into {nameof(TypeRegistry)}.{nameof(World.TypeRegistry.RegisterTypesFromAssembliesContaining)}().")
         { }
     }
 }

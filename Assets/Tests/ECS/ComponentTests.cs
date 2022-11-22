@@ -18,8 +18,8 @@ namespace Tests.ECS
         [OneTimeSetUp]
         public void OnTimeSetUp()
         {
+            World.TypeRegistry.RegisterTypesFromAssemblyContaining<TestComponentValData>();
             world = new World();
-            world.RegisterEntityTypes<TestComponentValData>();
         }
 
         [SetUp]

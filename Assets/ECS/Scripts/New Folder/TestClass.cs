@@ -14,7 +14,8 @@ namespace ECS.Scripts.New_Folder
 
         private void Awake()
         {
-            world.RegisterEntityTypes<IAssemblyMarker>();
+            World.TypeRegistry.RegisterTypesFromAssemblyContaining<IAssemblyMarker>();
+          //  world.RegisterTypes<IAssemblyMarker>();
         }
 
         private void Start()

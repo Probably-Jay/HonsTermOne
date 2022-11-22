@@ -9,18 +9,11 @@ namespace ECS.Scripts.Real.Internal.Types
 {
     internal class ComponentMapper
     {
-        public Dictionary<Type, IAnyEntityComponentContainer> ScanForTypes<TMarker>()
+        public IReadOnlyDictionary<Type, IAnyEntityComponentContainer> CreateComponentMapping(TypeRegistry typeRegistry)
         {
-            var types = AssemblyScanner<IComponentData>.ScanForFromAssemblyContaining<TMarker>();
+            var componentTypes = typeRegistry.ComponentTypes;
 
-            return CreateAnyMapElements(types);
-        }
-        
-        public Dictionary<Type, IAnyEntityComponentContainer> ScanForTypes(params Type[] assemblyMarkers)
-        {
-            var types = AssemblyScanner<IComponentData>.ScanForFromAssembliesContaining(assemblyMarkers);
-
-            return CreateAnyMapElements(types);
+            return CreateAnyMapElements(componentTypes);
         }
 
         private static Dictionary<Type, IAnyEntityComponentContainer> CreateAnyMapElements(IEnumerable<TypeInfo> types)
