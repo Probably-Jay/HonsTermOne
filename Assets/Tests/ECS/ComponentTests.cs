@@ -109,13 +109,32 @@ namespace Tests.ECS
            Assert.Throws<ComponentNullException>(() => entity.GetComponent<TestComponentValData>());
         } 
         
-        // [Test]
-        // public void ComponentsRemovedCannotModify()
-        // {
-        //     ref var component = ref entity.AddComponent<TestComponentValData>();
-        //     entity.RemoveComponent<TestComponentValData>();
-        //     
-        //     Assert.False(component.ExistsAttachedToEntity());
-        // }
+        [Test]
+        public void ComponentsRemovedOverwrite()
+        {
+            ref var component = ref entity.AddComponent<TestComponentValData>();
+
+            component.ComponentData.Data = 1;
+            
+            entity.RemoveComponent<TestComponentValData>();
+            ref var component2 = ref entity.AddComponent<TestComponentValData>();
+            
+            Assert.AreEqual(0, component2.ComponentData.Data);
+        }
+        
+        [Test]
+        public void ComponentsRemovedCannotModify()
+        {
+            ref var component = ref entity.AddComponent<TestComponentValData>();
+            
+            entity.RemoveComponent<TestComponentValData>();
+            ref var component2 = ref entity.AddComponent<TestComponentValData>();
+            
+            component.ComponentData.Data = 1;
+
+            Assert.AreEqual(0, component2.ComponentData.Data);
+
+            Assert.False(component.ExistsAttachedToEntity());
+        }
     }
 }
