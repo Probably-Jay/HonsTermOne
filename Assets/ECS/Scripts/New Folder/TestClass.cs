@@ -13,7 +13,7 @@ namespace ECS.Scripts.New_Folder
 
         private void Awake()
         {
-       //     container = new ComponentAnymap();
+            World.RegisterEntityTypes<IAssemblyMarker>();
         }
 
         private void Start()

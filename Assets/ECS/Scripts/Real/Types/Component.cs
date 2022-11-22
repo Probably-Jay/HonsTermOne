@@ -5,18 +5,21 @@ namespace ECS.Scripts.Real.Types
 {
     public struct Component<T> : IComponent where T : struct, IComponentData
     {
-        public Entity EntityID { get; }
+        public Entity Entity { get; }
+        public ulong EntityIDIndex => Entity.EntityIDIndex;
+        
         public T Data;
+
 
         public Component(T dataEcs, Entity entity)
         {
             Data = dataEcs;
-            EntityID = entity;
+            Entity = entity;
         }
 
         public override string ToString()
         {
-            return $"Entity component {EntityID.ToString()} component: {Data.ToString()}";
+            return $"Entity component {Entity.ToString()} component: {Data.ToString()}";
         }
     }
 }

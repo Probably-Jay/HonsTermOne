@@ -8,7 +8,7 @@ namespace ECS.Scripts.Real.Internal.Extentions
     public static class EntityHandlingExtensions
     {
         public static bool IsNullEntity(this Entity entity) => entity.Equals(Entity.EntityFactory.NullEntity);
-        public static bool IsNullComponent<T>(this Component<T> component) where T :struct, IComponentData => component.EntityID.Equals(Entity.EntityFactory.NullEntity);
+        public static bool IsNullComponent<T>(this Component<T> component) where T :struct, IComponentData => component.Entity.Equals(Entity.EntityFactory.NullEntity);
         internal static bool IsNullID(this GenerationalID entity) => entity.Equals(GenerationalID.NullID);
 
         internal static bool IsSupersededBy(this Entity thisEntity, Entity other)

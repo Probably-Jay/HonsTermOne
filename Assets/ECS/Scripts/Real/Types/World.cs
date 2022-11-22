@@ -25,6 +25,11 @@ namespace ECS.Scripts.Real.Types
         {
             return ref ComponentArrays.Get<T>(entity);
         }
+
+        public static void RegisterEntityTypes<TMarker>()
+        {
+            ComponentArrays.Init<TMarker>();
+        }
     }
     
 

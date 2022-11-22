@@ -27,7 +27,7 @@ namespace ECS.Scripts.Real.Internal.Types
         
         public void Add(T newComponent)
         {
-            if(ElementAtIndexIsValidComponentOfEntity(newComponent.EntityID))
+            if(ElementAtIndexIsValidComponentOfEntity(newComponent.Entity))
                 throw new Exception("Entity already has component attached");
             
             list.Add(newComponent);
@@ -38,7 +38,7 @@ namespace ECS.Scripts.Real.Internal.Types
             if (!ElementAtIndexIsValidComponentOfEntity(entity)) 
                 return ref NullEntityRef;
             
-            return ref list[entity.IdIndex];
+            return ref list[entity.EntityIDIndex];
         }
 
         private bool ElementAtIndexIsValidComponentOfEntity(in Entity newComponentEntityID)
@@ -47,17 +47,17 @@ namespace ECS.Scripts.Real.Internal.Types
                 throw new EntityNullException();
             
             // component at this entity index is out of array bounds
-            if(list.IndexOutOfRange(newComponentEntityID.IdIndex))
+            if(list.IndexOutOfRange(newComponentEntityID.EntityIDIndex))
                 return false;
 
-            var existingComponentEntityID = list[newComponentEntityID.IdIndex];
+            var existingComponentEntityID = list[newComponentEntityID.EntityIDIndex];
 
             // component at this entity index is null
-            if (existingComponentEntityID.EntityID.IsNullEntity())
+            if (existingComponentEntityID.Entity.IsNullEntity())
                 return false;
 
             // component at this entity index was valid, but that entity no longer exists and it's id has been reused
-            if(existingComponentEntityID.EntityID.IsSupersededBy(newComponentEntityID))
+            if(existingComponentEntityID.Entity.IsSupersededBy(newComponentEntityID))
                 return false;
 
             return true;
@@ -88,7 +88,7 @@ namespace ECS.Scripts.Real.Internal.Types
         
         public void Add(T element)
         {
-            var index = element.EntityID.IdIndex;
+            var index = element.EntityIDIndex;
 
             if (IndexOutOfRange(index)) 
                 Reserve(index);

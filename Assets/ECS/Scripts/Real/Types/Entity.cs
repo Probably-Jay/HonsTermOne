@@ -13,11 +13,10 @@ namespace ECS.Scripts.Real.Types
             GenerationalID = id;
         }
 
-        public ulong IdIndex => GenerationalID.ID;
-        
         internal GenerationalID GenerationalID { get; }
         
-        public Entity EntityID => this;
+        public ulong EntityIDIndex => GenerationalID.ID;
+      
 
         public bool Equals(Entity other) => GenerationalID.Equals(other.GenerationalID);
         public override bool Equals(object obj) => obj is Entity other && Equals(other);

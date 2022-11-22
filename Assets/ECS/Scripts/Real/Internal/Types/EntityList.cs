@@ -53,7 +53,7 @@ namespace ECS.Scripts.Real.Internal.Types
             if (!EntityIsValid(entity)) 
                 return ref NullEntityRef;
             
-            return ref list[entity.IdIndex];
+            return ref list[entity.EntityIDIndex];
         }
        
         private bool EntityIsValid(in Entity entity)
@@ -62,17 +62,17 @@ namespace ECS.Scripts.Real.Internal.Types
                 return false;
             
             // entity at this entity index is out of array bounds
-            if(list.IndexOutOfRange(entity.IdIndex))
+            if(list.IndexOutOfRange(entity.EntityIDIndex))
                 return false;
 
-            var existingEntity = list[entity.IdIndex];
+            var existingEntity = list[entity.EntityIDIndex];
 
             // entity at this entity index is null
-            if (existingEntity.EntityID.IsNullEntity())
+            if (existingEntity.IsNullEntity())
                 return false;
 
             // entity at this index is newer and the passed in entity has been destroyed
-            if(entity.EntityID.IsSupersededBy(existingEntity))
+            if(entity.IsSupersededBy(existingEntity))
                 return false;
 
             return true;
