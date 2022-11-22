@@ -24,28 +24,28 @@ namespace ECS.Scripts.New_Folder
 
         private void Test()
         {
-            Entity entity = world.CreateEntity();
-            
-            entity.AddComponent<Foo>();
-            
-
-            ref var data = ref entity.GetComponent<Foo>();
-            Debug.Log(data);
-
-            data.ComponentData = new Foo{data = 1};
-            
-            ref var data2 = ref entity.GetComponent<Foo>();
-            Debug.Log(data2);
-            
-            entity.DestroyFromWorld();
-
-            
-            data2.ComponentData.data++;
-            
-            ref var data3 = ref entity.GetComponent<Foo>();
-            Debug.Log(data3);
-            Debug.Log(data);
-            
+            // Entity entity = world.CreateEntity();
+            //
+            // entity.AddComponent<Foo>();
+            //
+            //
+            // ref var data = ref entity.GetComponent<Foo>();
+            // Debug.Log(data);
+            //
+            // data.ComponentData = new Foo{data = 1};
+            //
+            // ref var data2 = ref entity.GetComponent<Foo>();
+            // Debug.Log(data2);
+            //
+            // entity.DestroyFromWorld();
+            //
+            //
+            // data2.ComponentData.data++;
+            //
+            // ref var data3 = ref entity.GetComponent<Foo>();
+            // Debug.Log(data3);
+            // Debug.Log(data);
+            //
 
             //Debug.Log(data.Exists);
 

@@ -51,6 +51,15 @@ namespace Tests.ECS
             entity.DestroyFromWorld();
             
             Assert.False(copy.ExistsInWorld());
+        }  
+        
+        [Test]
+        public void DoubleDestroyEntityHasNoEffect()
+        {
+            var entity = world.CreateEntity();
+
+            entity.DestroyFromWorld();
+            entity.DestroyFromWorld();
         }
     }
 }

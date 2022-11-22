@@ -37,7 +37,12 @@ namespace ECS.Scripts.Real.Internal.Types
 
         public bool ContainsComponent<T>(in Component<T> component) where T : struct, IComponentData
         {
-            return !Get<T>(component.Entity).IsNullComponent();
+            return ContainsComponent<T>(component.Entity);
+        }
+
+        public bool ContainsComponent<T>(in Entity entity) where T : struct, IComponentData
+        {
+            return !Get<T>(entity).IsNullComponent();
         }
 
         private IComponentContainer<Component<T>> GetList<T>() where T : struct, IComponentData

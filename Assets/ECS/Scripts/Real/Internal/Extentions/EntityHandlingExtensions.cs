@@ -19,7 +19,7 @@ namespace ECS.Scripts.Real.Internal.Extentions
         internal static void AssertIsNotNull<T>(this Component<T> component) where T : struct, IComponentData
         {
             if (component.IsNullComponent())
-                throw new ComponentNullException();
+                throw new EntityDoesNotContainComponentException();
         }
         
         internal static bool IsNullID(this GenerationalID entity) => entity.Equals(GenerationalID.NullID);

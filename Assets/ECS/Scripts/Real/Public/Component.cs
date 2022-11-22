@@ -6,6 +6,9 @@ namespace ECS.Scripts.Real.Public
 {
     public struct Component<T> : IComponent, IEquatable<Component<T>> where T : struct, IComponentData
     {
+        public delegate void ActionRef<T1>(ref T1 item);
+        public delegate TRet FunctionRef<out TRet,T1>(ref T1 item);
+        
         public void Destroy()
         {
             Entity.EntityFactory.Destroy(ref entity);

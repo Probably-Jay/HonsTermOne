@@ -30,12 +30,13 @@ namespace ECS.Scripts.Real.Public
 
         public void DestroyEntity(ref Entity entity)
         {
-            if(entity.IsNullEntity()) return;
+            if(entity.IsNullEntity()) 
+                return;
             ComponentArrays.RemoveAllComponentsFrom(entity);
             EntityArray.DestroyEntity(ref entity);
         }
 
-        internal ref Component<T> AddComponent<T>(in Entity entity) where T : struct, IComponentData
+        internal void AddComponent<T>(in Entity entity) where T : struct, IComponentData
         {
             entity.AssertIsNotNull();
             var component = new Component<T>(new T(), entity);
@@ -43,7 +44,6 @@ namespace ECS.Scripts.Real.Public
             
             ref var addComponent = ref GetComponent<T>(entity);
             addComponent.AssertIsNotNull();
-            return ref addComponent;
         }
 
         public void RemoveComponent<T>(in Entity entity) where T : struct, IComponentData
@@ -68,6 +68,11 @@ namespace ECS.Scripts.Real.Public
         public bool EntityContainsComponent<T>(in Component<T> component) where T : struct, IComponentData
         {
             return EntityExistsWithinWorld(component.Entity) && ComponentArrays.ContainsComponent(component);
+        }
+
+        public bool EntityContainsComponent<T>(in Entity entity) where T : struct, IComponentData
+        {
+            return EntityExistsWithinWorld(entity) && ComponentArrays.ContainsComponent<T>(entity);
         }
     }
     

@@ -33,108 +33,99 @@ namespace Tests.ECS
         {
             entity.DestroyFromWorld();
         }
-
-        [Test]
-        public void CreateComponent()
-        {
-            ref var component = ref entity.AddComponent<TestComponentValData>();
-            Assert.False(component.IsNullComponent());
-        } 
         
         [Test]
         public void CreatedComponentExists()
         {
-            ref var component = ref entity.AddComponent<TestComponentValData>();
-            Assert.True(component.ExistsAttachedToEntity());
+            entity.AddComponent<TestComponentValData>();
+            Assert.True(entity.HasComponent<TestComponentValData>());
         }
-
-        [Test]
-        public void GetComponentGetsActualComponent()
-        {
-            ref var createdComponent = ref entity.AddComponent<TestComponentValData>();
-            ref var gotComponent = ref entity.GetComponent<TestComponentValData>();
-            
-            Assert.True(gotComponent.ExistsAttachedToEntity());
-            Assert.True(createdComponent.Equals(gotComponent));
-            Assert.AreEqual(createdComponent, gotComponent);
-        }
+        
         
         [Test]
         public void ComponentValueIsUpdatable()
         {
+            entity.AddComponent<TestComponentValData>();
+            
+            var initialVal = entity.ReadComponent<TestComponentValData>().ComponentData.Data;
+            
+            Assert.AreEqual(initialVal, 0);
+
+            entity.ModifyComponentData((ref TestComponentValData data) =>
             {
-                ref var component = ref entity.AddComponent<TestComponentValData>();
-
-                Assert.AreEqual(component.ComponentData.Data, 0);
-
-                component.ComponentData.Data++;
-                Assert.AreEqual(component.ComponentData.Data, 1);
-            }
-            {
-                ref var component = ref entity.GetComponent<TestComponentValData>();
-
-                Assert.AreEqual(component.ComponentData.Data, 1);
-
-                component.ComponentData.Data++;
-                Assert.AreEqual(component.ComponentData.Data, 2);
-            }
+                data.Data++;
+            });
+            
+            var newValue = entity.ReadComponent<TestComponentValData>().ComponentData.Data;
+            
+            Assert.AreEqual(newValue, 1);
         }
 
         [Test]
         public void ComponentsRemovedDestroySelf()
         {
-            ref var component = ref entity.AddComponent<TestComponentValData>();
+            Assert.False(entity.HasComponent<TestComponentValData>());
+            
+            entity.AddComponent<TestComponentValData>();
+            Assert.True(entity.HasComponent<TestComponentValData>());
             entity.RemoveComponent<TestComponentValData>();
             
-            Assert.True(component.IsNullComponent());
+            Assert.False(entity.HasComponent<TestComponentValData>());
         }  
         
         [Test]
         public void ComponentsRemovedDestroyedFromWorld()
         {
-            ref var component = ref entity.AddComponent<TestComponentValData>();
-            entity.RemoveComponent<TestComponentValData>();
-            
-            Assert.False(component.ExistsAttachedToEntity());
-        } 
-        
-        [Test]
-        public void ComponentsRemovedCannotBeAccessed()
-        {
-            Assert.Throws<ComponentNullException>(() => entity.GetComponent<TestComponentValData>());
-
             entity.AddComponent<TestComponentValData>();
+
+            Assert.True(entity.QueryComponent(
+                (ref Component<TestComponentValData> component) =>
+                    component.ExistsAttachedToEntity())
+            );
+            
             entity.RemoveComponent<TestComponentValData>();
             
-           Assert.Throws<ComponentNullException>(() => entity.GetComponent<TestComponentValData>());
+            Assert.Throws<EntityDoesNotContainComponentException>(
+                    () => _ = entity.QueryComponent(
+                        (ref Component<TestComponentValData> component) =>
+                            component.ExistsAttachedToEntity()
+                            )
+                    );
         } 
         
-        [Test]
-        public void ComponentsRemovedOverwrite()
-        {
-            ref var component = ref entity.AddComponent<TestComponentValData>();
 
-            component.ComponentData.Data = 1;
+        [Test]
+        public void ComponentsRemovedResets() {
+            entity.AddComponent<TestComponentValData>();
+
+            entity.ModifyComponentData(
+                (ref TestComponentValData component) =>
+                {
+                    component.Data = 1;
+                });
+            
+            Assert.AreEqual(entity.ReadComponent<TestComponentValData>().ComponentData.Data, 1);
             
             entity.RemoveComponent<TestComponentValData>();
-            ref var component2 = ref entity.AddComponent<TestComponentValData>();
+            entity.AddComponent<TestComponentValData>();
             
-            Assert.AreEqual(0, component2.ComponentData.Data);
+            Assert.AreEqual(entity.ReadComponent<TestComponentValData>().ComponentData.Data, 0);
         }
-        
+
         [Test]
-        public void ComponentsRemovedCannotModify()
+        public void ComponentOverwriteOverwrites()
         {
-            ref var component = ref entity.AddComponent<TestComponentValData>();
-            
-            entity.RemoveComponent<TestComponentValData>();
-            ref var component2 = ref entity.AddComponent<TestComponentValData>();
-            
+            entity.AddComponent<TestComponentValData>();
+
+            var component = entity.ReadComponent<TestComponentValData>();
+
             component.ComponentData.Data = 1;
+            
+            Assert.AreEqual(entity.ReadComponent<TestComponentValData>().ComponentData.Data, 0);
 
-            Assert.AreEqual(0, component2.ComponentData.Data);
-
-            Assert.False(component.ExistsAttachedToEntity());
+            entity.WriteComponent(component);
+            
+            Assert.AreEqual(entity.ReadComponent<TestComponentValData>().ComponentData.Data, 1);
         }
     }
 }
