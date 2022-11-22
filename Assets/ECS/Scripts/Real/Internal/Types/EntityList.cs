@@ -1,4 +1,5 @@
 ﻿using ECS.Scripts.Real.Internal.Extentions;
+using ECS.Scripts.Real.Public;
 using Entity = ECS.Scripts.Real.Public.Entity;
 
 namespace ECS.Scripts.Real.Internal.Types
@@ -6,13 +7,12 @@ namespace ECS.Scripts.Real.Internal.Types
     internal class EntityList
     {
         private readonly NonBoxingList<Entity> list;
-        
         public EntityList(ulong? initialCapacity)
         {
             list = new NonBoxingList<Entity>(initialCapacity);
         }
         
-        public Entity CreateEntity()
+        public Entity CreateEntity(World owningWorld)
         {
             ulong index = 1; // skip index 0 as is sentinel value
             foreach (ref var entity in list)
@@ -23,21 +23,21 @@ namespace ECS.Scripts.Real.Internal.Types
                     continue;
                 }
 
-                ReUseEntityID(ref entity, index);
+                ReUseEntityID(ref entity, index, owningWorld);
                 return entity;
             }
 
-            return AddNewEntity(index);
+            return AddNewEntity(index, owningWorld);
         }
 
-        private static void ReUseEntityID(ref Entity entity, ulong index)
+        private static void ReUseEntityID(ref Entity entity, ulong index, World owningWorld)
         {
-            Entity.EntityFactory.Reuse(index, ref entity);
+            Entity.EntityFactory.Reuse(index, ref entity, owningWorld);
         }
 
-        private Entity AddNewEntity(ulong index)
+        private Entity AddNewEntity(ulong index, World owningWorld)
         {
-            var entity = Entity.EntityFactory.New(index);
+            var entity = Entity.EntityFactory.New(index, owningWorld);
             list.Add(entity);
             return entity;
         }

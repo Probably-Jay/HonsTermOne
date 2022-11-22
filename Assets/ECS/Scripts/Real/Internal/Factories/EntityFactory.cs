@@ -11,23 +11,24 @@ namespace ECS.Scripts.Real.Public
         {
             internal static Entity NullEntity => new Entity();
 
-            public static Entity New(ulong index)
+            public static Entity New(ulong index, World owningWorld)
             {
-                return new Entity(GenerationalID.NewID(index));
+                return new Entity(GenerationalID.NewID(index), owningWorld);
             }
-
-            public static void Reuse(ulong index, ref Entity entity)
+            
+            public static void Reuse(ulong index, ref Entity entity, World owningWorld)
             {
                 if (!entity.IsNullEntity())
                     throw new EntityMustBeDestroyedBeforeIDIsReused();
 
-                entity = new Entity(GenerationalID.ReuseID(index, entity.GenerationalID));
+                entity = new Entity(GenerationalID.ReuseID(index, entity.GenerationalID), owningWorld);
             }
 
             public static void Destroy(ref Entity entity)
             {
-                entity = new Entity(GenerationalID.SetIDNull(entity.GenerationalID));
+                entity = new Entity(GenerationalID.SetIDNull(entity.GenerationalID), entity.OwningWorld);
             }
+
         }
     }
 }

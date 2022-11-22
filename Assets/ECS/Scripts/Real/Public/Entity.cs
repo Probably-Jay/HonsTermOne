@@ -8,12 +8,14 @@ namespace ECS.Scripts.Real.Public
     {
         internal static partial class EntityFactory{}
         
-        private Entity(GenerationalID id)
+        private Entity(GenerationalID id, World world)
         {
             GenerationalID = id;
+            OwningWorld = world;
         }
 
         internal GenerationalID GenerationalID { get; }
+        internal World OwningWorld { get; }
         
         public ulong EntityIDIndex => GenerationalID.ID;
       

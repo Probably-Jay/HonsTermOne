@@ -7,15 +7,15 @@ namespace ECS.Scripts.Real.Internal.Extentions
     {
         public static void AddComponent<T>(this in Entity entity) where T : struct, IComponentData
         {
-            World.AddComponent<T>(entity);
+            entity.OwningWorld.AddComponent<T>(entity);
         }
         public static ref Component<T> GetComponent<T>(this in Entity entity) where T : struct, IComponentData
         {
-            return ref World.GetComponent<T>(entity);
+            return ref entity.OwningWorld.GetComponent<T>(entity);
         }   
         public static void DestroyFromWorld(this ref Entity entity)
         {
-            World.DestroyEntity(ref entity);
+            entity.OwningWorld.DestroyEntity(ref entity);
         }
     }
 }

@@ -10,10 +10,11 @@ namespace ECS.Scripts.New_Folder
     {
        // private ComponentAnymap container;
 
+       private readonly World world = new();
 
         private void Awake()
         {
-            World.RegisterEntityTypes<IAssemblyMarker>();
+            world.RegisterEntityTypes<IAssemblyMarker>();
         }
 
         private void Start()
@@ -23,7 +24,7 @@ namespace ECS.Scripts.New_Folder
 
         private void Test()
         {
-            Entity entity = World.CreateEntity();
+            Entity entity = world.CreateEntity();
             
             entity.AddComponent<Foo>();
             
