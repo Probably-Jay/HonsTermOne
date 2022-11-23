@@ -30,5 +30,9 @@ namespace ECS.Scripts.Real.Public
         {
             return $"(Entity: {GenerationalID.ToString()})";
         }
+        
+        
+        internal delegate void ActionRef(ref Entity entity);
+        
     }
 }

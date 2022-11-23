@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -56,6 +57,27 @@ namespace ECS.Scripts.Real.Public
             return entity;
         }
 
+        public ICollection<Entity> CreateEntities(int numberOfEntitiesToCreate) 
+            => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity());
+        
+        public ICollection<Entity> CreateEntities<T>(int numberOfEntitiesToCreate) where T : struct, IComponentData
+            => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity<T>()); 
+        
+        public ICollection<Entity> CreateEntities<T>(int numberOfEntitiesToCreate, TypeList types) where T : struct, IComponentData
+            => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity(types));
+        
+        
+        public ICollection<Entity> CreateEntitiesWithFunction(int numberOfEntitiesToCreate, Func<Entity> entityCreationFunction)
+        {
+            List<Entity> entities = new();
+            for (var i = 0; i < numberOfEntitiesToCreate; i++)
+            {
+                entities.Add(entityCreationFunction());
+            }
+
+            return entities;
+        }   
+        
 
         internal void DestroyEntity(ref Entity entity)
         {
@@ -63,6 +85,11 @@ namespace ECS.Scripts.Real.Public
                 return;
             ComponentArrays.RemoveAllComponentsFrom(entity);
             EntityArray.DestroyEntity(ref entity);
+        }
+        
+        public void DestroyAllEntities()
+        {
+            EntityArray.ForeachEntity(((ref Entity entity) => DestroyEntity(ref entity)));
         }
 
         internal void AddComponent<T>(in Entity entity) where T : struct, IComponentData
@@ -90,6 +117,10 @@ namespace ECS.Scripts.Real.Public
                 catch (NullReferenceException)
                 {
                     throw new InvalidTypeListException();
+                }
+                catch (TargetInvocationException e)
+                {
+                    throw e.InnerException!;
                 }
             }
         }
@@ -127,6 +158,14 @@ namespace ECS.Scripts.Real.Public
             entity.AssertIsNotNull();
             return ComponentArrays.GetTypesOfAllAttachedComponents(entity);
         }
+        
+        public ulong EntityCount()
+        {
+            return EntityArray.ActiveEntityCount;
+        }
+
+
+        
     }
 
 

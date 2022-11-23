@@ -55,6 +55,19 @@ namespace Tests.ECS
         }
         
         [Test]
+        public void CreatesMultipleEntities()
+        {
+            var entities = world.CreateEntities(100);
+
+            foreach (var entity in entities)
+            {
+                Assert.IsTrue(entity.ExistsInWorld());
+            }
+
+            Assert.AreEqual(100, world.EntityCount());
+        }  
+        
+        [Test]
         public void DestroyEntityDestroysSelf()
         {
             var entity = world.CreateEntity();
@@ -83,6 +96,12 @@ namespace Tests.ECS
 
             entity.DestroyFromWorld();
             entity.DestroyFromWorld();
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
+            world.DestroyAllEntities();
         }
     }
 }

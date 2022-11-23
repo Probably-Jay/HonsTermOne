@@ -28,4 +28,10 @@ namespace ECS.Scripts.Real.Internal.Exceptions
         public EntityMustBeDestroyedBeforeIDIsReused() : base("Entity can only be created when the existing entity with this ID is destroyed")
         { }
     }
+
+    public class CannotAddDuplicateComponentException : Exception
+    {
+        public CannotAddDuplicateComponentException(Type t) : base($"Entity already has component {t} attached")
+        { }
+    }
 }

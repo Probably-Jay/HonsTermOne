@@ -1,5 +1,7 @@
-﻿using ECS.Scripts.Real.Internal.Extentions;
+﻿using System;
+using ECS.Scripts.Real.Internal.Extentions;
 using ECS.Scripts.Real.Public;
+using JetBrains.Annotations;
 using Entity = ECS.Scripts.Real.Public.Entity;
 
 namespace ECS.Scripts.Real.Internal.Types
@@ -11,7 +13,32 @@ namespace ECS.Scripts.Real.Internal.Types
         {
             list = new NonBoxingList<Entity>(initialCapacity);
         }
+
+        public void ForeachEntity([NotNull] Entity.ActionRef action)
+        {
+            foreach (ref var entity in list)
+            {
+                action(ref entity);
+            }
+        }
         
+        
+        public ulong ActiveEntityCount
+        {
+            get
+            {
+                var count = 0ul;
+                ForeachEntity((ref Entity entity) =>
+                    {
+                        if (!entity.IsNullEntity())
+                            count++;
+                    }
+                );
+
+                return count;
+            }
+        }
+
         public Entity CreateEntity(World owningWorld)
         {
             ulong index = 1; // skip index 0 as is sentinel value
@@ -48,6 +75,8 @@ namespace ECS.Scripts.Real.Internal.Types
             Entity.EntityFactory.Destroy(ref entity);
             Entity.EntityFactory.Destroy(ref actualEntity);
         }
+        
+        
 
         private ref Entity GetEntity(in Entity entity)
         {
@@ -91,5 +120,8 @@ namespace ECS.Scripts.Real.Internal.Types
                 return ref list[0];
             }
         }
+
+
+      
     }
 }

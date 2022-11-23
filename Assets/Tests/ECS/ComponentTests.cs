@@ -54,6 +54,16 @@ namespace Tests.ECS
             var typesOnEntity = entity.GetAllAttachedComponentTypes();
             CollectionAssert.AreEquivalent(typesOnEntity,types.Types);
         }
+
+        [Test] public void CreateMultipleSameComponentFails()
+        {
+            var types = TypeList.Create()
+                .AddType<TestComponent>()
+                .AddType<TestComponent>()
+                .Complete();
+            
+            Assert.Throws<CannotAddDuplicateComponentException>(()=>entity.AddComponents(types));
+        }
         
         
         [Test]

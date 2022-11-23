@@ -33,7 +33,7 @@ namespace ECS.Scripts.Real.Internal.Types
         public void Add(T newComponent)
         {
             if(IsValidComponentOfEntity(newComponent.Entity))
-                throw new Exception("Entity already has component attached");
+                throw new CannotAddDuplicateComponentException(typeof(T));
             
             list.Add(newComponent);
         }
@@ -88,7 +88,9 @@ namespace ECS.Scripts.Real.Internal.Types
             }
         }
     }
-    
+
+  
+
     internal class NonBoxingList<T> where T : struct, IEntityComponent
     {
         private T[] data;
