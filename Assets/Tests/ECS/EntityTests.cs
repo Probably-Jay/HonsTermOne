@@ -64,6 +64,28 @@ namespace Tests.ECS
                 (ref Entity e) => e.HasExactComponents(
                     TypeList.Create().AddType<TestComponent>().AddType<OtherTestComponent>().AddType<AnotherTestComponent>().Complete())
                 ));
+        } 
+        
+        [Test]
+        public void CreatedEntityHasPrespecifiedType()
+        {
+            var types = new MyType();
+            
+            var entity = world.CreateEntity(types);
+
+            var typesOnEntity = entity.GetAllAttachedComponentTypes();
+            CollectionAssert.AreEquivalent(typesOnEntity,types.Types);
+            
+            Assert.AreEqual(1, world.EntityCount((ref Entity e) => e.HasExactComponents(types)));
+            
+            Assert.AreEqual(0, world.EntityCount(
+                (ref Entity e) => e.HasExactComponents(TypeList.Create().AddType<TestComponent>().Complete())
+                ));
+            
+            Assert.AreEqual(0, world.EntityCount(
+                (ref Entity e) => e.HasExactComponents(
+                    TypeList.Create().AddType<TestComponent>().AddType<OtherTestComponent>().AddType<AnotherTestComponent>().Complete())
+                ));
         }
         
         [Test]

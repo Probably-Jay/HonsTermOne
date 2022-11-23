@@ -12,6 +12,13 @@ using UnityEditorInternal;
 
 namespace Tests.ECS
 {
+    public class MyType : TypeList
+    {
+        public MyType() : base(
+                Type<TestComponent>, 
+                Type<OtherTestComponent>
+            ) { }
+    }
 
     public interface IDataModule
     {
@@ -85,16 +92,7 @@ namespace Tests.ECS
             world.Tick(1/50f);
             dataModule.Received(1).Floop();
         }
-
-        private class MyType : TypeList
-        {
-            public MyType() 
-                : base(
-                    typeof(TestComponent), 
-                    typeof(OtherTestComponent)
-                    )
-            { }
-        }
+        
         
         [Test]
         public void SystemCanTickEntityWhenComponentsMatch()

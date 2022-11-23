@@ -25,10 +25,17 @@ namespace ECS.Scripts.Real.Public
         private TypeList()
         { }
         
-        protected internal TypeList([NotNull] params Type[] safeTypeCollection)
+        internal TypeList([NotNull] params Type[] safeTypeCollection)
         {
             var typeBuilder = TypeList.Create();
             typeBuilder = safeTypeCollection.Aggregate(typeBuilder, (current, type) => current.AddType(type));
+
+            types = typeBuilder.Complete().types;
+        }
+        public TypeList([NotNull] params Func<Type>[] safeTypeDelegateCollection)
+        {
+            var typeBuilder = TypeList.Create();
+            typeBuilder = safeTypeDelegateCollection.Aggregate(typeBuilder, (current, typeDelegate) => current.AddType(typeDelegate()));
 
             types = typeBuilder.Complete().types;
         }
@@ -41,6 +48,11 @@ namespace ECS.Scripts.Real.Public
         {
             types.Add(typeof(T));
             return this;
+        } 
+        
+        public static Type Type<T>() where T : struct, IComponentData
+        {
+            return typeof(T);
         }
 
         public ITypeListBuilder AddType(Type type)
