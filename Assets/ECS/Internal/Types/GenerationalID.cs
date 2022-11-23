@@ -1,6 +1,6 @@
 ﻿using System;
 using ECS.Internal.Exceptions;
-using ECS.Internal.Extentions;
+using ECS.Internal.Extensions;
 
 namespace ECS.Internal.Types
 {

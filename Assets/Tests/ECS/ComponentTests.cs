@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ECS.Internal.Exceptions;
-using ECS.Internal.Extentions;
+using ECS.Internal.Extensions;
 using ECS.Internal.Interfaces;
 using ECS.Public;
 using ECS.Public.Classes;
@@ -180,7 +180,7 @@ namespace Tests.ECS
             entity.AddComponent<TestComponentValData>();
 
             Assert.True(entity.QueryComponent(
-                (ref Component<TestComponentValData> component) =>
+                (ref ComponentEcs<TestComponentValData> component) =>
                     component.ExistsAttachedToEntity())
             );
             
@@ -188,7 +188,7 @@ namespace Tests.ECS
             
             Assert.Throws<EntityDoesNotContainComponentException>(
                     () => _ = entity.QueryComponent(
-                        (ref Component<TestComponentValData> component) =>
+                        (ref ComponentEcs<TestComponentValData> component) =>
                             component.ExistsAttachedToEntity()
                             )
                     );

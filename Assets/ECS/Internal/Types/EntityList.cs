@@ -1,5 +1,5 @@
 ﻿using System;
-using ECS.Internal.Extentions;
+using ECS.Internal.Extensions;
 using ECS.Public.Classes;
 using JetBrains.Annotations;
 using Entity = ECS.Public.Classes.Entity;

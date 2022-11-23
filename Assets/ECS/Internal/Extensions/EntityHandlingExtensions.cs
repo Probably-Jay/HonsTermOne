@@ -4,7 +4,7 @@ using ECS.Public.Classes;
 using ECS.Public.Interfaces;
 using Entity = ECS.Public.Classes.Entity;
 
-namespace ECS.Internal.Extentions
+namespace ECS.Internal.Extensions
 {
     public static class EntityHandlingExtensions
     {
@@ -14,10 +14,10 @@ namespace ECS.Internal.Extentions
             if (entity.IsNullEntity())
                 throw new EntityNullException();
         }
-        public static bool IsNullComponent<T>(this Component<T> component) where T :struct, IComponentData => component.Entity.Equals(Entity.Factory.NullEntity);
-        internal static void AssertIsNotNull<T>(this Component<T> component) where T : struct, IComponentData
+        public static bool IsNullComponent<T>(this ComponentEcs<T> componentEcs) where T :struct, IComponentData => componentEcs.Entity.Equals(Entity.Factory.NullEntity);
+        internal static void AssertIsNotNull<T>(this ComponentEcs<T> componentEcs) where T : struct, IComponentData
         {
-            if (component.IsNullComponent())
+            if (componentEcs.IsNullComponent())
                 throw new EntityDoesNotContainComponentException();
         }
         

@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using ECS.Public.Classes;
 using ECS.Public.Interfaces;
 
-namespace ECS.Internal.Extentions
+namespace ECS.Internal.Extensions
 {
     public static class EntityUseExtensions
     {
@@ -46,30 +46,30 @@ namespace ECS.Internal.Extentions
            return entity.OwningWorld.GetAllAttachedComponentTypes(entity);
         }
 
-        internal static ref Component<T> GetComponent<T>(this in Entity entity) where T : struct, IComponentData
+        internal static ref ComponentEcs<T> GetComponent<T>(this in Entity entity) where T : struct, IComponentData
         {
             return ref entity.OwningWorld.GetComponent<T>(entity);
         }
 
-        public static void ModifyComponentData<T> (this in Entity entity, [NotNull] Component<T>.ActionRef<T> componentDelegate) where T : struct, IComponentData
+        public static void ModifyComponentData<T> (this in Entity entity, [NotNull] ComponentEcs<T>.ActionRef<T> componentDelegate) where T : struct, IComponentData
         {
             ref var component = ref entity.OwningWorld.GetComponent<T>(entity);
             componentDelegate(ref component.ComponentData);
         }
 
-        public static TRet QueryComponent<TRet,T> (this in Entity entity, [NotNull] Component<T>.FunctionRef<TRet,Component<T>> componentDelegate) where T : struct, IComponentData
+        public static TRet QueryComponent<TRet,T> (this in Entity entity, [NotNull] ComponentEcs<T>.FunctionRef<TRet,ComponentEcs<T>> componentDelegate) where T : struct, IComponentData
         {
             ref var component = ref entity.OwningWorld.GetComponent<T>(entity);
             return componentDelegate(ref component);
         }
 
-        public static Component<T> ReadComponent<T> (this in Entity entity) where T : struct, IComponentData
+        public static ComponentEcs<T> ReadComponent<T> (this in Entity entity) where T : struct, IComponentData
         {
             ref var component = ref entity.OwningWorld.GetComponent<T>(entity);
             return component;
         }
 
-        public static void WriteComponent<T>(this in Entity entity, Component<T> newData) where T : struct, IComponentData
+        public static void WriteComponent<T>(this in Entity entity, ComponentEcs<T> newData) where T : struct, IComponentData
         {
             ref var component = ref entity.OwningWorld.GetComponent<T>(entity);
             component.ComponentData = newData.ComponentData;
@@ -83,9 +83,9 @@ namespace ECS.Internal.Extentions
     
     public static class ComponentUseExtensions
     {
-        public static bool ExistsAttachedToEntity<T>(this in Component<T> component) where T : struct, IComponentData
+        public static bool ExistsAttachedToEntity<T>(this in ComponentEcs<T> componentEcs) where T : struct, IComponentData
         {
-            return !component.IsNullComponent() && component.Entity.OwningWorld.EntityHasComponent(component);
+            return !componentEcs.IsNullComponent() && componentEcs.Entity.OwningWorld.EntityHasComponent(componentEcs);
         }
     }
 }

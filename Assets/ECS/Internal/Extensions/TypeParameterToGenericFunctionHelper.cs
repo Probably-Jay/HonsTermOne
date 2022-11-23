@@ -2,9 +2,9 @@
 using System.Reflection;
 using ECS.Internal.Exceptions;
 
-namespace ECS.Public.Classes
+namespace ECS.Internal.Extensions
 {
-    internal static class TypeParameterToGenericFunctionCall
+    internal static class TypeParameterToGenericFunctionHelper
     {
         public static object CallGenericFunctionFromType(this object callingObject, Type type, string function, params object[] parameters)
         {

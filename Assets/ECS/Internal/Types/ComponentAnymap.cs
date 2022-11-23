@@ -13,7 +13,7 @@ namespace ECS.Internal.Types
     {
         IReadOnlyCollection<Type> Types { get; }
        // ref Component<T> Get<T>(Entity entity) where T : struct, IComponentData;
-        ref Component<T> GetComponent<T>(Entity entity) where T : struct, IComponentData;
+        ref ComponentEcs<T> GetComponent<T>(Entity entity) where T : struct, IComponentData;
     }
 
     internal class ComponentAnymapBase : IComponentAnymap
@@ -26,20 +26,20 @@ namespace ECS.Internal.Types
             mapping = setMapping;
         }
 
-        public ref Component<T> GetComponent<T>(Entity entity) where T : struct, IComponentData
+        public ref ComponentEcs<T> GetComponent<T>(Entity entity) where T : struct, IComponentData
         {
             return ref GetComponentList<T>().GetFrom(entity);
         }
-        public ref Component<T> GetComponent<T>(in Entity entity) where T : struct, IComponentData
+        public ref ComponentEcs<T> GetComponent<T>(in Entity entity) where T : struct, IComponentData
         {
             return ref GetComponentList<T>().GetFrom(in entity);
         }
         
-        protected IComponentContainer<Component<T>> GetComponentList<T>() where T : struct, IComponentData
+        protected IComponentContainer<ComponentEcs<T>> GetComponentList<T>() where T : struct, IComponentData
         {
             try
             {
-                return (IComponentContainer<Component<T>>)GetComponentList(typeof(T));
+                return (IComponentContainer<ComponentEcs<T>>)GetComponentList(typeof(T));
             }
             catch (InvalidCastException)
             {
@@ -82,7 +82,7 @@ namespace ECS.Internal.Types
             SetMapping(ComponentMapFactory.CreateComponentMapping(typeRegistry.ComponentTypes));
         }
         
-        public void Add<T>(Component<T> item) where T : struct, IComponentData
+        public void Add<T>(ComponentEcs<T> item) where T : struct, IComponentData
         {
             GetComponentList<T>().Add(item);
         }
@@ -94,9 +94,9 @@ namespace ECS.Internal.Types
         }
 
       
-        public bool ContainsComponent<T>(in Component<T> component) where T : struct, IComponentData
+        public bool ContainsComponent<T>(in ComponentEcs<T> componentEcs) where T : struct, IComponentData
         {
-            return ContainsComponent<T>(component.Entity);
+            return ContainsComponent<T>(componentEcs.Entity);
         }
 
         public bool ContainsComponent<T>(in Entity entity) where T : struct, IComponentData

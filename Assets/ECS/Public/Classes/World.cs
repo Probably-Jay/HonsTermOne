@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using ECS.Internal.Extentions;
+using ECS.Internal.Extensions;
 using ECS.Internal.Types;
 using ECS.Public.Interfaces;
 
@@ -92,7 +92,7 @@ namespace ECS.Public.Classes
         internal void AddComponent<T>(in Entity entity) where T : struct, IComponentData
         {
             entity.AssertIsNotNull();
-            var component = new Component<T>(new T(), entity);
+            var component = new ComponentEcs<T>(new T(), entity);
             ComponentArrays.Add(component);
             
             ref var addComponent = ref GetComponent<T>(entity);
@@ -107,7 +107,7 @@ namespace ECS.Public.Classes
             }
         }
 
-        internal ref Component<T> GetComponent<T>(in Entity entity) where T : struct, IComponentData
+        internal ref ComponentEcs<T> GetComponent<T>(in Entity entity) where T : struct, IComponentData
         {
             entity.AssertIsNotNull();
             ref var component = ref ComponentArrays.GetComponent<T>(entity);
@@ -125,9 +125,9 @@ namespace ECS.Public.Classes
             return EntityArray.ContainsEntity(entity);
         }
 
-        internal bool EntityHasComponent<T>(in Component<T> component) where T : struct, IComponentData
+        internal bool EntityHasComponent<T>(in ComponentEcs<T> componentEcs) where T : struct, IComponentData
         {
-            return EntityExistsWithinWorld(component.Entity) && ComponentArrays.ContainsComponent(component);
+            return EntityExistsWithinWorld(componentEcs.Entity) && ComponentArrays.ContainsComponent(componentEcs);
         }
 
         internal bool EntityHasComponent<T>(in Entity entity) where T : struct, IComponentData

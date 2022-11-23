@@ -16,7 +16,7 @@ namespace ECS.Internal.Types
             {
                 var containerClass = typeof(ComponentList<>);
 
-                var wrapperClass = typeof(Component<>);
+                var wrapperClass = typeof(ComponentEcs<>);
                 var wrappedType = wrapperClass.MakeGenericType(type);
 
                 var containerType = containerClass.MakeGenericType(wrappedType);

@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using ECS.Internal.Extentions;
+using ECS.Internal.Extensions;
 using ECS.Public;
 using ECS.Public.Classes;
 using NUnit.Framework;

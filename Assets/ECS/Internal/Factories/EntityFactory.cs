@@ -1,6 +1,6 @@
 ﻿using System;
 using ECS.Internal.Exceptions;
-using ECS.Internal.Extentions;
+using ECS.Internal.Extensions;
 using ECS.Internal.Types;
 using ECS.Public.Classes;
 using JetBrains.Annotations;
