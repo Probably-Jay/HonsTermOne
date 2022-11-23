@@ -14,10 +14,12 @@ namespace ECS.Scripts.Real.Internal.Types
             list = new NonBoxingList<Entity>(initialCapacity);
         }
 
-        public void ForeachEntity([NotNull] Entity.ActionRef action)
+        public void ForeachExtantEntity([NotNull] Entity.ActionRef action)
         {
             foreach (ref var entity in list)
             {
+                if (entity.IsNullEntity())
+                    continue;
                 action(ref entity);
             }
         }
@@ -26,11 +28,8 @@ namespace ECS.Scripts.Real.Internal.Types
         public ulong EntityCount([CanBeNull] Entity.ActionFunc<bool> countDelegate)
         {
             var count = 0ul;
-            ForeachEntity((ref Entity entity) =>
+            ForeachExtantEntity((ref Entity entity) =>
                 {
-                    if (entity.IsNullEntity()) 
-                        return;
-                    
                     if(countDelegate?.Invoke(ref entity) ?? true) 
                         count++;
                 }

@@ -30,7 +30,8 @@ namespace Tests.ECS
         }; 
         
         public static readonly Type[] AllSystemTypes = {
-            typeof(TestSystem),
+            typeof(TrivialTestSystem),
+            typeof(ActualTestSystem),
         };
     }
     public class WorldTests

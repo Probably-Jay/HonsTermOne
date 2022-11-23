@@ -1,22 +1,32 @@
-﻿namespace ECS.Scripts.Real.Public
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ECS.Scripts.Real.Internal.Interfaces;
+
+namespace ECS.Scripts.Real.Public
 {
+    internal interface IAnySystem
+    {
+        ISystemLogic SystemLogicInterface { get; }
+        IReadOnlyList<Type> ModifiesTypes { get; }
+    }
     public interface ISystemLogic
     {
-        void Update(float deltaTime);
+        void Update(float deltaTime, IComponentUpdateContainer entityComponentContainer);
     }
-
-    internal interface IAnyComponentSystem
-    { }
     
 
-    internal class ComponentSystem<T> : IAnyComponentSystem where T : ISystemLogic
+    internal class System<T> : IAnySystem where T : ISystemLogic
     {
+        public ISystemLogic SystemLogicInterface => SystemLogic;
+        public IReadOnlyList<Type> ModifiesTypes { get; }
         public T SystemLogic { get; }
 
-        public ComponentSystem(T systemLogic)
+
+        public System(T systemLogic, IEnumerable<Type> modifiesTypes)
         {
             SystemLogic = systemLogic;
+            ModifiesTypes = modifiesTypes.ToList();
         }
-
     }
 }

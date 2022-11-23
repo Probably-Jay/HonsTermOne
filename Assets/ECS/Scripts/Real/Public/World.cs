@@ -90,7 +90,7 @@ namespace ECS.Scripts.Real.Public
         
         public void DestroyAllEntities()
         {
-            EntityArray.ForeachEntity(((ref Entity entity) => DestroyEntity(ref entity)));
+            EntityArray.ForeachExtantEntity((ref Entity entity) => DestroyEntity(ref entity));
         }
 
         internal void AddComponent<T>(in Entity entity) where T : struct, IComponentData
@@ -175,13 +175,25 @@ namespace ECS.Scripts.Real.Public
             return EntityArray.EntityCount(countDelegate);
         }
 
-        public void Tick(float f)
+        public void Tick(float deltaTime)
         {
-            throw new NotImplementedException();
+            SystemList.ForeachSystem((Type systemType, IAnySystem system) =>
+            {
+                var operationTypes = system.ModifiesTypes;
+
+                var neededComponentArrays = ComponentArrays.GetNeededComponentArrays(operationTypes);
+                EntityArray.ForeachExtantEntity((ref Entity entity) =>
+                    {
+                        system.SystemLogicInterface.Update(deltaTime, new ComponentUpdateContainer(entity, neededComponentArrays));
+                    }
+                );
+            });
         }
 
+       
+
         public void ModifySystem<T>([NotNull] Action<T> action) where T : class, ISystemLogic 
-            => SystemList.ModifySystem<T>(action);
+            => SystemList.ModifySystem(action);
         
         public TRet QuerySystem<T, TRet>([NotNull] Func<T, TRet> action) where T : class, ISystemLogic 
             => SystemList.QuerySystem(action);

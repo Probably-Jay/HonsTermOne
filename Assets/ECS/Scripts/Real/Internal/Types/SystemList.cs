@@ -9,7 +9,7 @@ namespace ECS.Scripts.Real.Public
 {
     internal class SystemList
     {
-        private IReadOnlyDictionary<Type, IAnyComponentSystem> systemMap;
+        private IReadOnlyDictionary<Type, IAnySystem> systemMap;
         public void RegisterTypes(TypeRegistry typeRegistry)
         {
             systemMap = SystemMapFactory.CreateSystemMap(typeRegistry.SystemTypes);
@@ -27,11 +27,11 @@ namespace ECS.Scripts.Real.Public
             return action(system.SystemLogic);
         }
 
-        private ComponentSystem<T> GetSystem<T>() where T : class, ISystemLogic
+        private System<T> GetSystem<T>() where T : class, ISystemLogic
         {
             try
             {
-                return (ComponentSystem<T>)systemMap[typeof(T)];
+                return (System<T>)systemMap[typeof(T)];
             }
             catch (KeyNotFoundException)
             {
@@ -46,5 +46,20 @@ namespace ECS.Scripts.Real.Public
                 throw new MissingSystemTypeException(typeof(T));
             }
         }
+
+        
+        public void ForeachSystem([NotNull]Action<Type, IAnySystem> action)
+        {
+            foreach (var system in systemMap)
+            {
+                action(system.Key, system.Value);
+            }
+        }
+
+
+        // public List<Type> GetOperatingTypes(Type systemType)
+        // {
+        //     GetSystem<>()
+        // }
     }
 }

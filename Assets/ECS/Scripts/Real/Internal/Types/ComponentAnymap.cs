@@ -21,18 +21,18 @@ namespace ECS.Scripts.Real.Internal.Types
         
         public void Add<T>(Component<T> item) where T : struct, IComponentData
         {
-            GetList<T>().Add(item);
+            GetComponentList<T>().Add(item);
         }
 
         public void RemoveComponentFrom<T>(in Entity entity) where T : struct, IComponentData
         {
-            var componentContainer = GetList<T>();
+            var componentContainer = GetComponentList<T>();
             componentContainer.RemoveFrom(entity);
         }
 
         public ref Component<T> Get<T>(in Entity entity) where T : struct, IComponentData
         {
-            return ref GetList<T>().GetFrom(entity);
+            return ref GetComponentList<T>().GetFrom(entity);
         }
 
         public bool ContainsComponent<T>(in Component<T> component) where T : struct, IComponentData
@@ -44,26 +44,33 @@ namespace ECS.Scripts.Real.Internal.Types
         {
             return !Get<T>(entity).IsNullComponent();
         }
-        
-      
 
-        private IComponentContainer<Component<T>> GetList<T>() where T : struct, IComponentData
+
+        private IComponentContainer<Component<T>> GetComponentList<T>() where T : struct, IComponentData
         {
             try
             {
-                return (IComponentContainer<Component<T>>)mapping[typeof(T)];
+                return (IComponentContainer<Component<T>>)GetComponentList(typeof(T));
             }
-            catch (KeyNotFoundException)
-            {
-                throw new MissingComponentTypeException(typeof(T));
-            }     
             catch (InvalidCastException)
             {
                 throw new MissingComponentTypeException(typeof(T));
-            } 
+            }
+        }
+
+        private IAnyComponentContainer GetComponentList(Type type) 
+        {
+            try
+            {
+                return mapping[type];
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new MissingComponentTypeException(type);
+            }
             catch (NullReferenceException)
             {
-                throw new MissingComponentTypeException(typeof(T));
+                throw new MissingComponentTypeException(type);
             }
         }  
         
@@ -89,7 +96,13 @@ namespace ECS.Scripts.Real.Internal.Types
             return types;
         }
 
-     
+
+        public Dictionary<Type, IAnyComponentContainer> GetNeededComponentArrays(IReadOnlyList<Type> operationTypes)
+        {
+            return mapping
+                .Where( kvp => operationTypes.Contains(kvp.Key))
+                .ToDictionary(dict => dict.Key, dict => dict.Value);
+        }
     }
 
     

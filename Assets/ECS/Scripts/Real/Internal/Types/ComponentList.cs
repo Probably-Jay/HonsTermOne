@@ -66,6 +66,11 @@ namespace ECS.Scripts.Real.Internal.Types
             component.Destroy();
         }
 
+        public dynamic GetFromAsObject(in Entity entity)
+        {
+            return GetFrom(entity);
+        }
+
 
         public bool IsValidComponentOfEntity(in Entity newComponentEntityID)
         {
