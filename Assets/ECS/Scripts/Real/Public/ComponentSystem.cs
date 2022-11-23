@@ -12,7 +12,7 @@ namespace ECS.Scripts.Real.Public
     }
     public interface ISystemLogic
     {
-        void Update(float deltaTime, IComponentUpdateContainer entityComponentContainer);
+        void Update(float deltaTime, IUpdatableEntity entity);
     }
     
 

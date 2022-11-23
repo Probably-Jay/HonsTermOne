@@ -25,16 +25,12 @@ namespace ECS.Scripts.Real.Internal.Extentions
 
         public static bool HasComponent<T>(this in Entity entity) where T : struct, IComponentData
         {
-            return entity.OwningWorld.EntityContainsComponent<T>(entity);
+            return entity.OwningWorld.EntityHasComponent<T>(entity);
         }
         
         public static bool HasExactComponents(this in Entity entity, TypeList types)
         {
-            entity.AssertIsNotNull();
-
-            var componentsOnEntity = entity.GetAllAttachedComponentTypes();
-
-            return componentsOnEntity.ToHashSet().SetEquals(types.Types.ToHashSet());
+            return entity.OwningWorld.HasExactComponents(entity, types.Types);
         }
 
         public static void RemoveComponent<T>(this in Entity entity) where T : struct, IComponentData
@@ -86,7 +82,7 @@ namespace ECS.Scripts.Real.Internal.Extentions
     {
         public static bool ExistsAttachedToEntity<T>(this in Component<T> component) where T : struct, IComponentData
         {
-            return !component.IsNullComponent() && component.Entity.OwningWorld.EntityContainsComponent(component);
+            return !component.IsNullComponent() && component.Entity.OwningWorld.EntityHasComponent(component);
         }
     }
 }

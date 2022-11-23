@@ -26,7 +26,7 @@ namespace ECS.Scripts.Real.Public
     
     public interface ITypeListBuilder
     {
-        public IEnumerable<Type> Types { get; }
+        public IReadOnlyCollection<Type> Types { get; }
 
         public ITypeListBuilder AddType<T>() where T : struct, IComponentData;
         public TypeList Complete();
@@ -36,8 +36,14 @@ namespace ECS.Scripts.Real.Public
     {
         private TypeList()
         { }
+
+        internal TypeList(IEnumerable<Type> safeTypeCollection)
+        {
+            types = safeTypeCollection.ToList();
+        }
+        
         private readonly List<Type> types = new List<Type>();
-        public IEnumerable<Type> Types => types;
+        public IReadOnlyCollection<Type> Types => types;
         public static ITypeListBuilder Create() => new TypeList();
         
         public ITypeListBuilder AddType<T>() where T : struct, IComponentData

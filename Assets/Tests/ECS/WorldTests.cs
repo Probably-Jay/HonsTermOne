@@ -10,9 +10,9 @@ namespace Tests.ECS
     
     }  
     
-    public struct OtherTestComponent : IComponentData 
+    public struct OtherTestComponent : IComponentData
     {
-    
+        public int Data;
     }
     
     public struct AnotherTestComponent : IComponentData 

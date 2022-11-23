@@ -1,4 +1,6 @@
-﻿using ECS.Scripts.Real.Internal.Interfaces;
+﻿using System.Linq;
+using ECS.Scripts.Real.Internal.Extentions;
+using ECS.Scripts.Real.Internal.Interfaces;
 using ECS.Scripts.Real.Public;
 using ECS.Scripts.Real.Public.Attributes;
 using NSubstitute;
@@ -26,7 +28,7 @@ namespace Tests.ECS
             DataModule = data;
         }
     
-        public void Update(float deltaTime, IComponentUpdateContainer entityComponentContainer)
+        public void Update(float deltaTime, IUpdatableEntity entity)
         {
             DataModule.Floop();
         }
@@ -36,9 +38,12 @@ namespace Tests.ECS
     public class ActualTestSystem : ISystemLogic
     {
     
-        public void Update(float deltaTime, IComponentUpdateContainer entityComponentContainer)
+        public void Update(float deltaTime, IUpdatableEntity entity)
         {
-            ref var a = ref entityComponentContainer.Get<TestComponent>();
+            ref var test = ref entity.GetComponent<TestComponent>();
+            ref var other = ref entity.GetComponent<OtherTestComponent>();
+
+            other.Data++;
         }
     
     }
@@ -77,6 +82,39 @@ namespace Tests.ECS
             world.CreateEntity();
             world.Tick(1/50f);
             dataModule.Received(1).Floop();
+        }
+        
+        class MyType : TypeListDefinition
+        {
+             
+        }
+        
+        [Test]
+        public void SystemCanTickEntityWhenComponentsMatch()
+        {
+            
+            
+            var entity = world.CreateEntities(10, TypeList.Create().AddType<OtherTestComponent>().AddType<TestComponent>().Complete()).ToList();
+            world.Tick(1/50f);
+
+            Assert.AreEqual(1, entity[0].ReadComponent<OtherTestComponent>().ComponentData.Data);
+            
+            world.Tick(1/50f);
+            
+            Assert.AreEqual(2, entity[0].ReadComponent<OtherTestComponent>().ComponentData.Data);
+        } 
+        
+        [Test]
+        public void SystemDoesNotTickEntityWhenComponentsDontMatch()
+        {
+            var entity = world.CreateEntities<OtherTestComponent>(10).ToList();
+            world.Tick(1/50f);
+
+            Assert.AreEqual(0, entity[0].ReadComponent<OtherTestComponent>().ComponentData.Data);
+            
+            world.Tick(1/50f);
+            
+            Assert.AreEqual(0, entity[0].ReadComponent<OtherTestComponent>().ComponentData.Data);
         }
 
         [TearDown]

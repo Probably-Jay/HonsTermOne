@@ -149,12 +149,12 @@ namespace ECS.Scripts.Real.Public
             return EntityArray.ContainsEntity(entity);
         }
 
-        internal bool EntityContainsComponent<T>(in Component<T> component) where T : struct, IComponentData
+        internal bool EntityHasComponent<T>(in Component<T> component) where T : struct, IComponentData
         {
             return EntityExistsWithinWorld(component.Entity) && ComponentArrays.ContainsComponent(component);
         }
 
-        internal bool EntityContainsComponent<T>(in Entity entity) where T : struct, IComponentData
+        internal bool EntityHasComponent<T>(in Entity entity) where T : struct, IComponentData
         {
             return EntityExistsWithinWorld(entity) && ComponentArrays.ContainsComponent<T>(entity);
         }
@@ -184,7 +184,9 @@ namespace ECS.Scripts.Real.Public
                 var neededComponentArrays = ComponentArrays.GetNeededComponentArrays(operationTypes);
                 EntityArray.ForeachExtantEntity((ref Entity entity) =>
                     {
-                        system.SystemLogicInterface.Update(deltaTime, new ComponentUpdateContainer(entity, neededComponentArrays));
+                        if(!entity.HasExactComponents(new TypeList(neededComponentArrays.Keys)))
+                            return;// continue
+                        system.SystemLogicInterface.Update(deltaTime, new UpdatableEntity(entity, neededComponentArrays));
                     }
                 );
             });
@@ -197,6 +199,11 @@ namespace ECS.Scripts.Real.Public
         
         public TRet QuerySystem<T, TRet>([NotNull] Func<T, TRet> action) where T : class, ISystemLogic 
             => SystemList.QuerySystem(action);
+
+        public bool HasExactComponents(in Entity entity, IReadOnlyCollection<Type> types)
+        {
+            return ComponentArrays.EntityHasExactComponents(entity, types);
+        }
     }
 
 

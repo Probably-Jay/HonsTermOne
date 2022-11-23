@@ -21,6 +21,7 @@ namespace ECS.Scripts.Real.Internal.Types
     {
         void Add(T newComponent);
         ref T GetFrom(in Entity entity);
+        ref T GetFrom(Entity entity);
     }
 
     internal class ComponentList<T> : IComponentContainer<T> where T : struct, IComponent
@@ -50,6 +51,14 @@ namespace ECS.Scripts.Real.Internal.Types
         }
 
         public ref T GetFrom(in Entity entity)
+        {
+            if (!IsValidComponentOfEntity(entity)) 
+                return ref NullEntityRef;
+            
+            return ref list[entity.EntityIDIndex];
+        }
+
+        public ref T GetFrom(Entity entity)
         {
             if (!IsValidComponentOfEntity(entity)) 
                 return ref NullEntityRef;

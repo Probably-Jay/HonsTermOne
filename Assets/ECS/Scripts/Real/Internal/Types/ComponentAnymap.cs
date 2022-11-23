@@ -42,9 +42,13 @@ namespace ECS.Scripts.Real.Internal.Types
 
         public bool ContainsComponent<T>(in Entity entity) where T : struct, IComponentData
         {
-            return !Get<T>(entity).IsNullComponent();
+            return GetComponentList<T>().IsValidComponentOfEntity(entity);
         }
 
+        public bool ContainsComponent(in Entity entity, Type type)
+        {
+            return GetComponentList(type).IsValidComponentOfEntity(entity);
+        }
 
         private IComponentContainer<Component<T>> GetComponentList<T>() where T : struct, IComponentData
         {
@@ -102,6 +106,26 @@ namespace ECS.Scripts.Real.Internal.Types
             return mapping
                 .Where( kvp => operationTypes.Contains(kvp.Key))
                 .ToDictionary(dict => dict.Key, dict => dict.Value);
+        }
+
+
+        public bool EntityHasExactComponents(in Entity entity, IReadOnlyCollection<Type> types)
+        {
+            foreach (var (type, container) in mapping)
+            {
+                if (types.Contains(type))
+                {
+                    if (!container.IsValidComponentOfEntity(entity))
+                        return false;
+                }
+                else
+                { 
+                    if (container.IsValidComponentOfEntity(entity))
+                        return false;
+                }
+            }
+
+            return true;
         }
     }
 
