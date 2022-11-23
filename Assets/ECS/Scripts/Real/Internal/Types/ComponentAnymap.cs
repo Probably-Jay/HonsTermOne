@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ECS.Scripts.Real.Internal.Exceptions;
 using ECS.Scripts.Real.Internal.Extentions;
 using ECS.Scripts.Real.Internal.Interfaces;
 using ECS.Scripts.Real.Public;
@@ -11,11 +12,11 @@ namespace ECS.Scripts.Real.Internal.Types
 {
     internal class ComponentAnymap
     {
-        private IReadOnlyDictionary<Type, IAnyEntityComponentContainer> mapping;
+        private IReadOnlyDictionary<Type, IAnyComponentContainer> mapping;
         
         public void RegisterTypes(TypeRegistry typeRegistry)
         {
-            mapping = new ComponentMapper().CreateComponentMapping(typeRegistry);
+            mapping = ComponentMapFactory.CreateComponentMapping(typeRegistry.ComponentTypes);
         }
         
         public void Add<T>(Component<T> item) where T : struct, IComponentData
@@ -93,12 +94,7 @@ namespace ECS.Scripts.Real.Internal.Types
 
     
 
-    internal class MissingComponentTypeException : Exception
-    {
-        public MissingComponentTypeException(Type t) : base($"Type {t} was not found during registration. " +
-                                                      $"Please ensure all types used exist within assemblies passed into {nameof(TypeRegistry)}.{nameof(World.TypeRegistry.RegisterTypesFromAssembliesContaining)}().")
-        { }
-    }
+  
 }
 
    

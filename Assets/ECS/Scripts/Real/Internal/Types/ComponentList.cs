@@ -10,14 +10,14 @@ using IComponent = ECS.Scripts.Real.Internal.Interfaces.IComponent;
 
 namespace ECS.Scripts.Real.Internal.Types
 {
-    internal interface IAnyEntityComponentContainer
+    internal interface IAnyComponentContainer
     {
         Type ContainedType { get; }
         bool IsValidComponentOfEntity(in Entity entity);
         void RemoveFrom(in Entity entity);
     }
 
-    internal interface IComponentContainer<T> : IAnyEntityComponentContainer  where T :  struct, IComponent
+    internal interface IComponentContainer<T> : IAnyComponentContainer  where T :  struct, IComponent
     {
         void Add(T newComponent);
         ref T GetFrom(in Entity entity);

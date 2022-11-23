@@ -66,9 +66,9 @@ namespace ECS.Scripts.Real.Public
         
         public ICollection<Entity> CreateEntities(int numberOfEntitiesToCreate, TypeList types) 
             => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity(types));
-        
-        
-        public ICollection<Entity> CreateEntitiesWithFunction(int numberOfEntitiesToCreate, Func<Entity> entityCreationFunction)
+
+
+        private ICollection<Entity> CreateEntitiesWithFunction(int numberOfEntitiesToCreate, Func<Entity> entityCreationFunction)
         {
             List<Entity> entities = new();
             for (var i = 0; i < numberOfEntitiesToCreate; i++)
@@ -158,8 +158,8 @@ namespace ECS.Scripts.Real.Public
         {
             return EntityExistsWithinWorld(entity) && ComponentArrays.ContainsComponent<T>(entity);
         }
-        
-        public IReadOnlyCollection<Type> GetAllAttachedComponentTypes(in Entity entity)
+
+        internal IReadOnlyCollection<Type> GetAllAttachedComponentTypes(in Entity entity)
         {
             entity.AssertIsNotNull();
             return ComponentArrays.GetTypesOfAllAttachedComponents(entity);
@@ -174,6 +174,17 @@ namespace ECS.Scripts.Real.Public
         {
             return EntityArray.EntityCount(countDelegate);
         }
+
+        public void Tick(float f)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ModifySystem<T>([NotNull] Action<T> action) where T : class, ISystemLogic 
+            => SystemList.ModifySystem<T>(action);
+        
+        public TRet QuerySystem<T, TRet>([NotNull] Func<T, TRet> action) where T : class, ISystemLogic 
+            => SystemList.QuerySystem(action);
     }
 
 

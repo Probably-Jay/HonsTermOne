@@ -11,7 +11,7 @@ namespace Tests.ECS
     {
         public int Data;
     }
-    class ComponentTests
+    public class ComponentTests
     {
         private World world;
         private Entity entity;

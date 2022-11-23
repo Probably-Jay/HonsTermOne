@@ -7,20 +7,13 @@ using ECS.Scripts.Real.Public.Attributes;
 
 namespace ECS.Scripts.Real.Internal.Types
 {
-    internal class ComponentMapper
+    internal static class ComponentMapFactory
     {
-        public IReadOnlyDictionary<Type, IAnyEntityComponentContainer> CreateComponentMapping(TypeRegistry typeRegistry)
+        public static IReadOnlyDictionary<Type, IAnyComponentContainer> CreateComponentMapping(IEnumerable<TypeInfo> componentTypes)
         {
-            var componentTypes = typeRegistry.ComponentTypes;
+            var componentAnymap = new Dictionary<Type, IAnyComponentContainer>();
 
-            return CreateAnyMapElements(componentTypes);
-        }
-
-        private static Dictionary<Type, IAnyEntityComponentContainer> CreateAnyMapElements(IEnumerable<TypeInfo> types)
-        {
-            var componentAnymap = new Dictionary<Type, IAnyEntityComponentContainer>();
-
-            foreach (var type in types)
+            foreach (var type in componentTypes)
             {
                 var containerClass = typeof(ComponentList<>);
 
@@ -31,7 +24,7 @@ namespace ECS.Scripts.Real.Internal.Types
 
                 var reserveSize = type.GetCustomAttribute<ReserveInComponentArray>()?.ReserveSize;
 
-                var container = (IAnyEntityComponentContainer)Activator.CreateInstance(containerType, reserveSize);
+                var container = (IAnyComponentContainer)Activator.CreateInstance(containerType, reserveSize);
 
                 componentAnymap.Add(type, container);
             }

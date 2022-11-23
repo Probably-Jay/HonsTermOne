@@ -8,7 +8,13 @@ namespace ECS.Scripts.Real.Public
     {
         public delegate void ActionRef<T1>(ref T1 item);
         public delegate TRet FunctionRef<out TRet,T1>(ref T1 item);
-        
+
+        internal Component(T componentDataEcs, Entity entity)
+        {
+            ComponentData = componentDataEcs;
+            this.entity = entity;
+        }
+
         public void Destroy()
         {
             Entity.EntityFactory.Destroy(ref entity);
@@ -19,15 +25,10 @@ namespace ECS.Scripts.Real.Public
 
         public Type DataType => typeof(T);
 
-        public readonly Entity Entity => entity;
         private Entity entity;
-        public ulong EntityIDIndex => Entity.EntityIDIndex;
+        public readonly Entity Entity => entity;
 
-        internal Component(T componentDataEcs, Entity entity)
-        {
-            ComponentData = componentDataEcs;
-            this.entity = entity;
-        }
+        public ulong EntityIDIndex => Entity.EntityIDIndex;
 
         public override string ToString()
         {

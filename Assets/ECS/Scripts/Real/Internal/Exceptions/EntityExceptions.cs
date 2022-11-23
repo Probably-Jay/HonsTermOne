@@ -1,4 +1,5 @@
 ﻿using System;
+using ECS.Scripts.Real.Public;
 
 namespace ECS.Scripts.Real.Internal.Exceptions
 {
@@ -29,9 +30,5 @@ namespace ECS.Scripts.Real.Internal.Exceptions
         { }
     }
 
-    public class CannotAddDuplicateComponentException : Exception
-    {
-        public CannotAddDuplicateComponentException(Type t) : base($"Entity already has component {t} attached")
-        { }
-    }
+   
 }
