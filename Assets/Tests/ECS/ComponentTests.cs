@@ -1,4 +1,5 @@
-﻿using ECS.Scripts.Real.Internal.Exceptions;
+﻿using System;
+using ECS.Scripts.Real.Internal.Exceptions;
 using ECS.Scripts.Real.Internal.Extentions;
 using ECS.Scripts.Real.Internal.Interfaces;
 using ECS.Scripts.Real.Public;
@@ -55,14 +56,13 @@ namespace Tests.ECS
             CollectionAssert.AreEquivalent(typesOnEntity,types.Types);
         }
 
-        [Test] public void CreateMultipleSameComponentFails()
+        [Test]
+        public void CreateMultipleSameComponentFails()
         {
-            var types = TypeList.Create()
+            Assert.Throws<DuplicateTypesInTypeListException>(() => TypeList.Create()
                 .AddType<TestComponent>()
                 .AddType<TestComponent>()
-                .Complete();
-            
-            Assert.Throws<CannotAddDuplicateComponentException>(()=>entity.AddComponents(types));
+                .Complete());
         }
         
         

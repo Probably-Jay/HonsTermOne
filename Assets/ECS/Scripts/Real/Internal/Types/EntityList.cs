@@ -23,20 +23,20 @@ namespace ECS.Scripts.Real.Internal.Types
         }
         
         
-        public ulong ActiveEntityCount
+        public ulong EntityCount([CanBeNull] Entity.ActionFunc<bool> countDelegate)
         {
-            get
-            {
-                var count = 0ul;
-                ForeachEntity((ref Entity entity) =>
-                    {
-                        if (!entity.IsNullEntity())
-                            count++;
-                    }
-                );
+            var count = 0ul;
+            ForeachEntity((ref Entity entity) =>
+                {
+                    if (entity.IsNullEntity()) 
+                        return;
+                    
+                    if(countDelegate?.Invoke(ref entity) ?? true) 
+                        count++;
+                }
+            );
 
-                return count;
-            }
+            return count;
         }
 
         public Entity CreateEntity(World owningWorld)

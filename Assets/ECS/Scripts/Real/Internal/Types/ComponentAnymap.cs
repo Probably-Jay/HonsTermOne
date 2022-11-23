@@ -43,6 +43,8 @@ namespace ECS.Scripts.Real.Internal.Types
         {
             return !Get<T>(entity).IsNullComponent();
         }
+        
+      
 
         private IComponentContainer<Component<T>> GetList<T>() where T : struct, IComponentData
         {
@@ -85,6 +87,8 @@ namespace ECS.Scripts.Real.Internal.Types
 
             return types;
         }
+
+     
     }
 
     

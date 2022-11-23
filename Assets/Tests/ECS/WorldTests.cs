@@ -14,13 +14,19 @@ namespace Tests.ECS
     {
     
     }
+    
+    public struct AnotherTestComponent : IComponentData 
+    {
+    
+    }
 
     static class TypeRegistry
     {
         public static readonly Type[] AllIComponentTypes = {
             typeof(TestComponent),
             typeof(OtherTestComponent),
-            typeof(TestComponentValData)
+            typeof(TestComponentValData),
+            typeof(AnotherTestComponent)
         }; 
         
         public static readonly Type[] AllSystemTypes = {

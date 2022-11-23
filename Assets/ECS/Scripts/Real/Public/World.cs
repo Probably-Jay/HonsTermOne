@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using ECS.Scripts.Real.Internal.Extentions;
@@ -63,7 +64,7 @@ namespace ECS.Scripts.Real.Public
         public ICollection<Entity> CreateEntities<T>(int numberOfEntitiesToCreate) where T : struct, IComponentData
             => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity<T>()); 
         
-        public ICollection<Entity> CreateEntities<T>(int numberOfEntitiesToCreate, TypeList types) where T : struct, IComponentData
+        public ICollection<Entity> CreateEntities(int numberOfEntitiesToCreate, TypeList types) 
             => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity(types));
         
         
@@ -106,22 +107,27 @@ namespace ECS.Scripts.Real.Public
         {
             foreach (var type in types.Types)
             {
-                try
-                {
-                    var method = GetType()
-                        .GetMethod(nameof(AddComponent), BindingFlags.Instance | BindingFlags.NonPublic)
-                        !.MakeGenericMethod(type)!;
+                CallGenericFunctionFromType(type, nameof(AddComponent), entity);
+            }
+        }
 
-                    method!.Invoke(this, new object[] { entity });
-                }
-                catch (NullReferenceException)
-                {
-                    throw new InvalidTypeListException();
-                }
-                catch (TargetInvocationException e)
-                {
-                    throw e.InnerException!;
-                }
+        private object CallGenericFunctionFromType(Type type, string function, Entity entity)
+        {
+            try
+            {
+                var method = GetType()
+                    .GetMethod(function, BindingFlags.Instance | BindingFlags.NonPublic)
+                    !.MakeGenericMethod(type)!;
+
+                return method!.Invoke(this, new object[] { entity });
+            }
+            catch (NullReferenceException)
+            {
+                throw new InvalidTypeListException();
+            }
+            catch (TargetInvocationException e)
+            {
+                throw e.InnerException!;
             }
         }
 
@@ -152,20 +158,22 @@ namespace ECS.Scripts.Real.Public
         {
             return EntityExistsWithinWorld(entity) && ComponentArrays.ContainsComponent<T>(entity);
         }
-
+        
         public IReadOnlyCollection<Type> GetAllAttachedComponentTypes(in Entity entity)
         {
             entity.AssertIsNotNull();
             return ComponentArrays.GetTypesOfAllAttachedComponents(entity);
         }
-        
+
         public ulong EntityCount()
         {
-            return EntityArray.ActiveEntityCount;
+            return EntityArray.EntityCount(null);
         }
 
-
-        
+        public ulong EntityCount([NotNull] Entity.ActionFunc<bool> countDelegate)
+        {
+            return EntityArray.EntityCount(countDelegate);
+        }
     }
 
 

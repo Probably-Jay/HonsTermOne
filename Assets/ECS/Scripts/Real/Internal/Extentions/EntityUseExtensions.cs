@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using ECS.Scripts.Real.Internal.Interfaces;
 using ECS.Scripts.Real.Public;
 
@@ -25,6 +26,15 @@ namespace ECS.Scripts.Real.Internal.Extentions
         public static bool HasComponent<T>(this in Entity entity) where T : struct, IComponentData
         {
             return entity.OwningWorld.EntityContainsComponent<T>(entity);
+        }
+        
+        public static bool HasExactComponents(this in Entity entity, TypeList types)
+        {
+            entity.AssertIsNotNull();
+
+            var componentsOnEntity = entity.GetAllAttachedComponentTypes();
+
+            return componentsOnEntity.ToHashSet().SetEquals(types.Types.ToHashSet());
         }
 
         public static void RemoveComponent<T>(this in Entity entity) where T : struct, IComponentData

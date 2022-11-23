@@ -3,7 +3,10 @@ using ECS.Scripts.Real.Internal.Exceptions;
 using ECS.Scripts.Real.Internal.Extentions;
 using ECS.Scripts.Real.Internal.Helper;
 using ECS.Scripts.Real.Internal.Interfaces;
+using ECS.Scripts.Real.Public;
+using JetBrains.Annotations;
 using Entity = ECS.Scripts.Real.Public.Entity;
+using IComponent = ECS.Scripts.Real.Internal.Interfaces.IComponent;
 
 namespace ECS.Scripts.Real.Internal.Types
 {
@@ -29,6 +32,14 @@ namespace ECS.Scripts.Real.Internal.Types
         }
 
         public Type ContainedType => typeof(T);
+        
+        public void ForeachComponent<TInner>([NotNull] Component<TInner>.ActionRef<T> action) where TInner : struct, IComponentData
+        {
+            foreach (ref var entity in list)
+            {
+                action(ref entity);
+            }
+        }
 
         public void Add(T newComponent)
         {
