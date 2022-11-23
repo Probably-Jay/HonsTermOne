@@ -187,7 +187,7 @@ namespace ECS.Scripts.Real.Public
                     {
                         if(!entity.HasExactComponents(new TypeList(neededComponentArrays.Keys.ToArray())))
                             return;// continue
-                        system.SystemLogicInterface.Update(deltaTime, new UpdatableEntity(entity, neededComponentArrays));
+                        system.Update(deltaTime, new UpdatableEntity(entity, neededComponentArrays));
                     }
                 );
             });

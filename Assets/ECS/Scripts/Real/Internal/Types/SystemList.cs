@@ -18,13 +18,13 @@ namespace ECS.Scripts.Real.Public
         public void ModifySystem<T>([NotNull] Action<T> action) where T : class, ISystemLogic
         {
             var system = GetSystem<T>();
-            action(system.SystemLogic);
+            system.ModifySystem(action);
         }
 
         public TRet QuerySystem<T, TRet>(Func<T, TRet> action) where T : class, ISystemLogic
         {
             var system = GetSystem<T>();
-            return action(system.SystemLogic);
+            return system.QuerySystem(action);
         }
 
         private System<T> GetSystem<T>() where T : class, ISystemLogic

@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using ECS.Scripts.Real.Internal.Interfaces;
+using ECS.Scripts.Real.Internal.Types;
+using JetBrains.Annotations;
+using UnityEngine.PlayerLoop;
 
 namespace ECS.Scripts.Real.Public
 {
     internal interface IAnySystem
     {
-        ISystemLogic SystemLogicInterface { get; }
         IReadOnlyList<Type> ModifiesTypes { get; }
+        void Update(float deltaTime, UpdatableEntity updatableEntity);
     }
     public interface ISystemLogic
     {
@@ -18,9 +21,12 @@ namespace ECS.Scripts.Real.Public
 
     internal class System<T> : IAnySystem where T : ISystemLogic
     {
-        public ISystemLogic SystemLogicInterface => SystemLogic;
+        private readonly Dictionary<Type, IAnyComponentContainer> neededComponentArrays;
+
+        //public ISystemLogic SystemLogicInterface => SystemLogic;
         public IReadOnlyList<Type> ModifiesTypes { get; }
-        public T SystemLogic { get; }
+
+        private T SystemLogic { get; }
 
 
         public System(T systemLogic, IEnumerable<Type> modifiesTypes)
@@ -28,5 +34,16 @@ namespace ECS.Scripts.Real.Public
             SystemLogic = systemLogic;
             ModifiesTypes = modifiesTypes.ToList();
         }
+
+        public void Update(float deltaTime, UpdatableEntity updatableEntity)
+        {
+            SystemLogic.Update(deltaTime, updatableEntity);
+        }
+
+        public void ModifySystem([NotNull]Action<T> action) 
+            => action(SystemLogic);
+
+        public TRet QuerySystem<TRet>(Func<T, TRet> action) 
+            => action(SystemLogic);
     }
 }
