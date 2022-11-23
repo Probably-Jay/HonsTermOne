@@ -12,17 +12,10 @@ using UnityEditorInternal;
 
 namespace Tests.ECS
 {
-    public class MyType : TypeList
-    {
-        public MyType() : base(
-                Type<TestComponent>, 
-                Type<OtherTestComponent>
-            ) { }
-    }
+  
 
     public interface IDataModule
     {
-        void Init();
         void Floop();
     }
 
@@ -46,7 +39,6 @@ namespace Tests.ECS
     [SystemOperatesOn(typeof(TestComponent), typeof(OtherTestComponent) )]
     public class ActualTestSystem : ISystemLogic
     {
-    
         public void Update(float deltaTime, IUpdatableEntity entity)
         {
             ref var test = ref entity.GetComponent<TestComponent>();
@@ -56,7 +48,14 @@ namespace Tests.ECS
         }
     
     }
-
+    
+    public class MyType : TypeList
+    {
+        public MyType() : base(
+            Type<TestComponent>, 
+            Type<OtherTestComponent>
+        ) { }
+    }
 
     public class SystemTests
     {
@@ -97,8 +96,6 @@ namespace Tests.ECS
         [Test]
         public void SystemCanTickEntityWhenComponentsMatch()
         {
-            
-            
             var entity = world.CreateEntities(10, new MyType()).ToList();
             world.Tick(1/50f);
 
