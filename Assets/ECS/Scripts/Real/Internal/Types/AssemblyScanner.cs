@@ -6,35 +6,42 @@ using ECS.Scripts.Real.Internal.Interfaces;
 
 namespace ECS.Scripts.Real.Internal.Types
 {
-    internal static class AssemblyScanner<TScannedFor>
+    internal static class AssemblyScanner
     {
-        internal static IEnumerable<TypeInfo> ScanFromCurrentlyExecutingAssembly()
+        internal static IEnumerable<TypeInfo> ScanFromCurrentlyExecutingAssembly<TScanForType>()
         {
-            return Scan(Assembly.GetExecutingAssembly());
+            return Scan<TScanForType>(Assembly.GetExecutingAssembly());
         }
 
-        internal static IEnumerable<TypeInfo> ScanForFromAssemblyContaining<TMarker>()
+        internal static IEnumerable<TypeInfo> ScanForFromAssemblyContaining<TScanForType, TFromAssemblyContainingMarker>()
         {
-            return Scan(typeof(TMarker).Assembly);
+            return Scan<TScanForType>(typeof(TFromAssemblyContainingMarker).Assembly);
         }
 
-        internal static IEnumerable<TypeInfo> ScanForFromAssembliesContaining(params Type[] assemblyMarkers)
+        internal static IEnumerable<TypeInfo> ScanForFromAssembliesContaining<TScanForType>(params Type[] assemblyMarkers)
         {
-            return Scan(assemblyMarkers.Select(m => m.Assembly).ToArray());
+            return Scan<TScanForType>(assemblyMarkers.Select(m => m.Assembly).ToArray());
         }
 
-        private static IEnumerable<TypeInfo> Scan(params Assembly[] assemblies)
+        private static IEnumerable<TypeInfo> Scan<TScanForType>(params Assembly[] assemblies)
         {
             IEnumerable<TypeInfo> componentTypes = null;
             foreach (var assembly in assemblies)
             {
                 // Get all concrete types implementing the IComponentECS interface
                 componentTypes = assembly.DefinedTypes
-                    .Where(x =>
-                        typeof(TScannedFor).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
+                    .Where(IsConcreteAndAssignableFrom<TScanForType>);
             }
 
             return componentTypes;
+        }
+
+        public static bool IsConcreteAndAssignableFrom<TScanForType>(Type x)
+        {
+            return 
+                typeof(TScanForType).IsAssignableFrom(x)
+                && !x.IsInterface
+                && !x.IsAbstract;
         }
     }
 }

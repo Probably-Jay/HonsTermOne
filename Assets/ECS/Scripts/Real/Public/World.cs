@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using ECS.Scripts.Real.Internal.Exceptions;
 using ECS.Scripts.Real.Internal.Extentions;
 using ECS.Scripts.Real.Internal.Interfaces;
 using ECS.Scripts.Real.Internal.Types;
@@ -184,7 +185,7 @@ namespace ECS.Scripts.Real.Public
                 var neededComponentArrays = ComponentArrays.GetNeededComponentArrays(operationTypes);
                 EntityArray.ForeachExtantEntity((ref Entity entity) =>
                     {
-                        if(!entity.HasExactComponents(new TypeList(neededComponentArrays.Keys)))
+                        if(!entity.HasExactComponents(new TypeList(neededComponentArrays.Keys.ToArray())))
                             return;// continue
                         system.SystemLogicInterface.Update(deltaTime, new UpdatableEntity(entity, neededComponentArrays));
                     }
@@ -216,21 +217,21 @@ namespace ECS.Scripts.Real.Public
 
         public void RegisterTypesFromCurrentlyExecutingAssembly()
         {
-            ComponentTypes = AssemblyScanner<IComponentData>.ScanFromCurrentlyExecutingAssembly().ToList();
-            SystemTypes = AssemblyScanner<ISystemLogic>.ScanFromCurrentlyExecutingAssembly().ToList();
+            ComponentTypes = AssemblyScanner.ScanFromCurrentlyExecutingAssembly<IComponentData>().ToList();
+            SystemTypes = AssemblyScanner.ScanFromCurrentlyExecutingAssembly<ISystemLogic>().ToList();
             OnUpdatedTypeRegistry?.Invoke();
         }
         public void RegisterTypesFromAssemblyContaining<TMarker>()
         {
-            ComponentTypes = AssemblyScanner<IComponentData>.ScanForFromAssemblyContaining<TMarker>().ToList();;
-            SystemTypes = AssemblyScanner<ISystemLogic>.ScanForFromAssemblyContaining<TMarker>().ToList();
+            ComponentTypes = AssemblyScanner.ScanForFromAssemblyContaining<IComponentData,TMarker>().ToList();;
+            SystemTypes = AssemblyScanner.ScanForFromAssemblyContaining<ISystemLogic,TMarker>().ToList();
             OnUpdatedTypeRegistry?.Invoke();
         } 
         public void RegisterTypesFromAssembliesContaining(Type assemblyMarker, params Type[] otherAssemblyMarkers)
         {
             var assemblyMarkers = new [] { assemblyMarker }.Concat(otherAssemblyMarkers).ToArray();
-            ComponentTypes = AssemblyScanner<IComponentData>.ScanForFromAssembliesContaining(assemblyMarkers).ToList();;
-            SystemTypes = AssemblyScanner<IComponentData>.ScanForFromAssembliesContaining(assemblyMarkers).ToList();
+            ComponentTypes = AssemblyScanner.ScanForFromAssembliesContaining<IComponentData>(assemblyMarkers).ToList();;
+            SystemTypes = AssemblyScanner.ScanForFromAssembliesContaining<ISystemLogic>(assemblyMarkers).ToList();
             OnUpdatedTypeRegistry?.Invoke();
         }
 

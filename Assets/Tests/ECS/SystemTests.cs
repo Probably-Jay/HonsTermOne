@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ECS.Scripts.Real.Internal.Extentions;
 using ECS.Scripts.Real.Internal.Interfaces;
 using ECS.Scripts.Real.Public;
@@ -83,10 +85,15 @@ namespace Tests.ECS
             world.Tick(1/50f);
             dataModule.Received(1).Floop();
         }
-        
-        class MyType : TypeListDefinition
+
+        private class MyType : TypeList
         {
-             
+            public MyType() 
+                : base(
+                    typeof(TestComponent), 
+                    typeof(OtherTestComponent)
+                    )
+            { }
         }
         
         [Test]
@@ -94,7 +101,7 @@ namespace Tests.ECS
         {
             
             
-            var entity = world.CreateEntities(10, TypeList.Create().AddType<OtherTestComponent>().AddType<TestComponent>().Complete()).ToList();
+            var entity = world.CreateEntities(10, new MyType()).ToList();
             world.Tick(1/50f);
 
             Assert.AreEqual(1, entity[0].ReadComponent<OtherTestComponent>().ComponentData.Data);

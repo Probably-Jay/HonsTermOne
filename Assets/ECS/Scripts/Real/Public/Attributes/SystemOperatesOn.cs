@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ECS.Scripts.Real.Internal.Interfaces;
+using ECS.Scripts.Real.Internal.Types;
 
 namespace ECS.Scripts.Real.Public.Attributes
 {
@@ -19,7 +20,7 @@ namespace ECS.Scripts.Real.Public.Attributes
         {
             if (ModifiesTypes.Length != ModifiesTypes.Distinct().Count())
                 throw new SystemUpdateFunctionDefinesDuplicateTypesException();
-            if(!ModifiesTypes.All(t =>  typeof(IComponentData).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract))
+            if(!ModifiesTypes.All(AssemblyScanner.IsConcreteAndAssignableFrom<IComponentData>))
                 throw new SystemUpdateFunctionDefinesNonComponentTypes();
         }
     }
