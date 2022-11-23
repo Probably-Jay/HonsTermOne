@@ -18,7 +18,7 @@ namespace ECS.Scripts.Real.Public
     {
         public static TypeRegistry TypeRegistry { get; } = new TypeRegistry();
         private EntityList EntityArray { get; }
-        private ComponentAnymap ComponentArrays { get; } = new();
+        private OwningComponentAnymap ComponentArrays { get; } = new();
 
         private SystemList SystemList { get; } = new();
 
@@ -37,7 +37,7 @@ namespace ECS.Scripts.Real.Public
         private void RegisterTypes()
         {
             ComponentArrays.RegisterTypes(TypeRegistry);
-            SystemList.RegisterTypes(TypeRegistry);
+            SystemList.RegisterTypes(TypeRegistry, ComponentArrays);
         }
 
         public Entity CreateEntity()
@@ -135,7 +135,7 @@ namespace ECS.Scripts.Real.Public
         internal ref Component<T> GetComponent<T>(in Entity entity) where T : struct, IComponentData
         {
             entity.AssertIsNotNull();
-            ref var component = ref ComponentArrays.Get<T>(entity);
+            ref var component = ref ComponentArrays.GetComponent<T>(entity);
             component.AssertIsNotNull();
             return ref component;
         }
@@ -178,20 +178,30 @@ namespace ECS.Scripts.Real.Public
 
         public void Tick(float deltaTime)
         {
-            SystemList.ForeachSystem((Type systemType, IAnySystem system) =>
-            {
-                var operationTypes = system.ModifiesTypes;
-
-                var neededComponentArrays = ComponentArrays.GetNeededComponentArrays(operationTypes);
-                EntityArray.ForeachExtantEntity((ref Entity entity) =>
+            // SystemList.ForeachSystem((_, system) =>
+            // {
+            //     var operationTypes = system.ModifiesTypes;
+            //
+            //     EntityArray.ForeachExtantEntity((ref Entity entity) =>
+            //         {
+            //             if (entity.HasExactComponents(new TypeList(operationTypes.ToArray())))
+            //                 system.Update(deltaTime, entity);
+            //         }
+            //     );
+            // });
+            EntityArray.ForeachExtantEntity(entity => 
+            { 
+                SystemList.ForeachSystem((_, system) =>
                     {
-                        if(!entity.HasExactComponents(new TypeList(neededComponentArrays.Keys.ToArray())))
-                            return;// continue
-                        system.Update(deltaTime, new UpdatableEntity(entity, neededComponentArrays));
+                        var operationTypes = system.ModifiesTypes;
+
+                        if (entity.HasExactComponents(new TypeList(operationTypes.ToArray())))
+                            system.Update(deltaTime, entity);
                     }
                 );
             });
         }
+    
 
        
 

@@ -22,6 +22,15 @@ namespace ECS.Scripts.Real.Internal.Types
                     continue;
                 action(ref entity);
             }
+        } 
+        public void ForeachExtantEntity([NotNull] Action<Entity> action)
+        {
+            foreach (ref var entity in list)
+            {
+                if (entity.IsNullEntity())
+                    continue;
+                action(entity);
+            }
         }
         
         

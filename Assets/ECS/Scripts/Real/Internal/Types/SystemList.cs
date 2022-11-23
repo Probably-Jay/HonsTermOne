@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ECS.Scripts.Real.Internal.Exceptions;
+using ECS.Scripts.Real.Internal.Interfaces;
 using ECS.Scripts.Real.Internal.Types;
 
 namespace ECS.Scripts.Real.Public
@@ -10,9 +11,9 @@ namespace ECS.Scripts.Real.Public
     internal class SystemList
     {
         private IReadOnlyDictionary<Type, IAnySystem> systemMap;
-        public void RegisterTypes(TypeRegistry typeRegistry)
+        public void RegisterTypes(TypeRegistry typeRegistry, OwningComponentAnymap componentArrays)
         {
-            systemMap = SystemMapFactory.CreateSystemMap(typeRegistry.SystemTypes);
+            systemMap = SystemMapFactory.CreateSystemMap(typeRegistry.SystemTypes, componentArrays);
         }
 
         public void ModifySystem<T>([NotNull] Action<T> action) where T : class, ISystemLogic

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using ECS.Scripts.Real.Internal.Exceptions;
+using ECS.Scripts.Real.Internal.Interfaces;
 using ECS.Scripts.Real.Public;
 using ECS.Scripts.Real.Public.Attributes;
 
@@ -9,7 +10,8 @@ namespace ECS.Scripts.Real.Internal.Types
 {
     internal static class SystemMapFactory
     {
-        public static Dictionary<Type, IAnySystem> CreateSystemMap(IReadOnlyCollection<TypeInfo> systemTypes)
+        public static Dictionary<Type, IAnySystem> CreateSystemMap(IReadOnlyCollection<TypeInfo> systemTypes,
+            OwningComponentAnymap componentArrays)
         {
             var systemCollection = new Dictionary<Type, IAnySystem>();
 
@@ -18,16 +20,23 @@ namespace ECS.Scripts.Real.Internal.Types
                 var logicType = typeof(System<>);
                 var systemType = logicType.MakeGenericType(type);
 
-                var operatingAttribute = type.GetCustomAttribute<SystemOperatesOn>()??throw new SystemDoesNotSpecifyOperatingTypesException(type);
-                
 
                 var systemLogic = (ISystemLogic)Activator.CreateInstance(type);
-                var system = (IAnySystem)Activator.CreateInstance(systemType, systemLogic, operatingAttribute.ModifiesTypes);
+
+
+                var operatingAttribute = type.GetCustomAttribute<SystemOperatesOn>()??throw new SystemDoesNotSpecifyOperatingTypesException(type);
+                var operatingTypeArrayRefs = GetOperatingTypeArrayRefs(componentArrays, operatingAttribute);
+                
+                var system = (IAnySystem)Activator.CreateInstance(systemType, systemLogic, operatingTypeArrayRefs);
 
                 systemCollection.Add(type, system);
             }
 
             return systemCollection;
         }
+
+        private static IComponentAnymap GetOperatingTypeArrayRefs(OwningComponentAnymap componentArrays,
+            SystemOperatesOn operatingAttribute) 
+            => componentArrays.GetNeededComponentArrays(operatingAttribute.ModifiesTypes);
     }
 }
