@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using ECS.Scripts.Real.Internal.Exceptions;
-using ECS.Scripts.Real.Internal.Extentions;
-using ECS.Scripts.Real.Public;
+using ECS.Internal.Extentions;
+using ECS.Public;
 using NUnit.Framework;
 using UnityEngine;
+using Entity = ECS.Public.Entity;
 
 namespace Tests.ECS
 {
@@ -67,7 +67,7 @@ namespace Tests.ECS
         } 
         
         [Test]
-        public void CreatedEntityHasPrespecifiedType()
+        public void CreatedEntityHasPreSpecifiedType()
         {
             var types = new MyType();
             

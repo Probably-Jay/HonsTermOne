@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ECS.Scripts.Real.Internal.Extentions;
-using ECS.Scripts.Real.Internal.Interfaces;
-using ECS.Scripts.Real.Public;
-using ECS.Scripts.Real.Public.Attributes;
+using ECS.Internal.Extentions;
+using ECS.Internal.Interfaces;
+using ECS.Public;
+using ECS.Public.Attributes;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;
 using NUnit.Framework;

@@ -1,9 +1,11 @@
 ﻿using System;
-using ECS.Scripts.Real.Internal.Exceptions;
-using ECS.Scripts.Real.Internal.Extentions;
-using ECS.Scripts.Real.Internal.Interfaces;
-using ECS.Scripts.Real.Public;
+using System.Collections.Generic;
+using ECS.Internal.Exceptions;
+using ECS.Internal.Extentions;
+using ECS.Internal.Interfaces;
+using ECS.Public;
 using NUnit.Framework;
+using Entity = ECS.Public.Entity;
 
 namespace Tests.ECS
 {
@@ -43,7 +45,7 @@ namespace Tests.ECS
         }
          
         [Test]
-        public void CreateMultipleComponent()
+        public void CreateMultipleComponentA()
         {
             var types = TypeList.Create()
                 .AddType<TestComponent>()
@@ -54,15 +56,88 @@ namespace Tests.ECS
             
             var typesOnEntity = entity.GetAllAttachedComponentTypes();
             CollectionAssert.AreEquivalent(typesOnEntity,types.Types);
+        }  
+        
+        [Test]
+        public void CreateMultipleComponentB()
+        {
+            var types = new MyType();
+
+            entity.AddComponents(types);
+            
+            var typesOnEntity = entity.GetAllAttachedComponentTypes();
+            CollectionAssert.AreEquivalent(typesOnEntity,types.Types);
+        }
+
+       
+        
+        [Test]
+        public void CreateMultipleComponentC()
+        {
+            entity.AddComponents<MyType>();
+            
+            var typesOnEntity = entity.GetAllAttachedComponentTypes();
+            CollectionAssert.AreEquivalent(typesOnEntity,new MyType().Types);
+        } 
+        
+        class EmptyType : TypeList
+        {
         }
 
         [Test]
-        public void CreateMultipleSameComponentFails()
+        public void DoesNotCreateMultipleComponentWhenEmptyTypeIsUsed()
         {
-            Assert.Throws<DuplicateTypesInTypeListException>(() => TypeList.Create()
+            entity.AddComponents<EmptyType>();
+            
+            var typesOnEntity = entity.GetAllAttachedComponentTypes();
+            CollectionAssert.AreEquivalent(typesOnEntity,new Type[]{});
+        }
+
+        class BadType : TypeList
+        {
+            public BadType() : base(
+                () => typeof(int)
+                ) { }
+        }
+        
+        [Test]
+        public void DoesNotCreateMultipleComponentWhenBadTypeIsUsed()
+        {
+            try
+            {
+                entity.AddComponents<BadType>();
+                Assert.Fail();
+            }
+            catch
+            {
+                //
+            }
+        }
+
+        [Test]
+        public void CreateMultipleSameComponentFailsA()
+        {
+            Assert.Throws<DuplicateTypesInTypeListException>(
+                () => TypeList.Create()
                 .AddType<TestComponent>()
                 .AddType<TestComponent>()
                 .Complete());
+        }
+
+        class BadTypeDuplicate : TypeList
+        {
+            public BadTypeDuplicate() : base(
+                Type<TestComponent>,
+                Type<TestComponent>
+            )
+            { }
+        }
+
+        [Test]
+        public void CreateMultipleSameComponentFailsB()
+        {
+            Assert.Throws<DuplicateTypesInTypeListException>(
+                () =>_ = new BadTypeDuplicate());
         }
         
         

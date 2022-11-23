@@ -1,6 +1,6 @@
 using System;
-using ECS.Scripts.Real.Internal.Interfaces;
-using ECS.Scripts.Real.Public;
+using ECS.Internal.Interfaces;
+using ECS.Public;
 using NUnit.Framework;
 
 namespace Tests.ECS
