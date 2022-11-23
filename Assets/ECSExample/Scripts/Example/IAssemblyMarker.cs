@@ -1,4 +1,4 @@
-﻿namespace ECS.Scripts.New_Folder
+﻿namespace ECSExample.Scripts.Example
 {
     public interface IAssemblyMarker
     { }
