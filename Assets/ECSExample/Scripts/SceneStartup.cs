@@ -1,4 +1,4 @@
-using System;
+ using System;
 using System.Collections;
 using System.Collections.Generic;
 using ECSExample.Scripts.Static;
@@ -12,6 +12,8 @@ public class SceneStartup : MonoBehaviour
     private void Awake()
     {
         worldProvider.Initialise();
+
+       
     }
 
     private void Update()
@@ -19,6 +21,10 @@ public class SceneStartup : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             entityCreator.CreateEntities();
+            var world = worldProvider.World;
+
+            var entites = world.EntityCount();
+            Debug.Log($"Entities {entites} exist");
         }
     }
 }

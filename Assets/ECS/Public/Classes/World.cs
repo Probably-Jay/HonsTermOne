@@ -54,20 +54,20 @@ namespace ECS.Public.Classes
             return entity;
         }
 
-        public ICollection<Entity> CreateEntities(int numberOfEntitiesToCreate) 
+        public ICollection<Entity> CreateEntities(ulong numberOfEntitiesToCreate) 
             => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity());
         
-        public ICollection<Entity> CreateEntities<T>(int numberOfEntitiesToCreate) where T : struct, IComponentData
+        public ICollection<Entity> CreateEntities<T>(ulong numberOfEntitiesToCreate) where T : struct, IComponentData
             => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity<T>()); 
         
-        public ICollection<Entity> CreateEntities(int numberOfEntitiesToCreate, TypeList types) 
+        public ICollection<Entity> CreateEntities(ulong numberOfEntitiesToCreate, TypeList types) 
             => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity(types));
 
 
-        private ICollection<Entity> CreateEntitiesWithFunction(int numberOfEntitiesToCreate, Func<Entity> entityCreationFunction)
+        private ICollection<Entity> CreateEntitiesWithFunction(ulong numberOfEntitiesToCreate, Func<Entity> entityCreationFunction)
         {
             List<Entity> entities = new();
-            for (var i = 0; i < numberOfEntitiesToCreate; i++)
+            for (ulong i = 0; i < numberOfEntitiesToCreate; i++)
             {
                 entities.Add(entityCreationFunction());
             }
@@ -186,10 +186,8 @@ namespace ECS.Public.Classes
         public TRet QuerySystem<T, TRet>([NotNull] Func<T, TRet> action) where T : class, ISystemLogic 
             => SystemList.QuerySystem(action);
 
-        public bool HasExactComponents(in Entity entity, IReadOnlyCollection<Type> types)
-        {
-            return ComponentArrays.EntityHasExactComponents(entity, types);
-        }
+        internal bool HasExactComponents(in Entity entity, IReadOnlyCollection<Type> types) 
+            => ComponentArrays.EntityHasExactComponents(entity, types);
     }
 
 

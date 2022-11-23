@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using ECS.Public.Interfaces;
+using UnityEngine;
 
 namespace ECSExample.Scripts.Static
 {
@@ -6,11 +7,14 @@ namespace ECSExample.Scripts.Static
     public class EntityCreator : ScriptableObject
     {
         [SerializeField] private WorldProvider worldProvider;
-        [SerializeField] private int entitiesToCreate;
+        [SerializeField] private ulong entitiesToCreate;
 
         public void CreateEntities()
         {
-            worldProvider.World.CreateEntities(entitiesToCreate);
+            worldProvider.World.CreateEntities<SpawnGameobjectComponent>(entitiesToCreate);
         }
     }
+
+
+   
 }

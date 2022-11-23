@@ -1,5 +1,4 @@
 using ECS.Public.Classes;
-using ECS.Scripts.New_Folder;
 using ECSExample.Scripts.Example;
 using UnityEngine;
 

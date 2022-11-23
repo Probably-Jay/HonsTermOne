@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ECS.Internal.Extensions;
 using ECS.Public;
 using ECS.Public.Classes;
@@ -92,15 +93,31 @@ namespace Tests.ECS
         [Test]
         public void CreatesMultipleEntities()
         {
-            var entities = world.CreateEntities(100);
+            var numberOfEntitiesToCreate = 100ul;
+            var entities = world.CreateEntities(numberOfEntitiesToCreate);
 
             foreach (var entity in entities)
             {
                 Assert.IsTrue(entity.ExistsInWorld());
             }
 
-            Assert.AreEqual(100, entities.Count());
-            Assert.AreEqual(100, world.EntityCount());
+            Assert.AreEqual(numberOfEntitiesToCreate, entities.Count());
+            Assert.AreEqual(numberOfEntitiesToCreate, world.EntityCount());
+        }  
+        
+        [Test]
+        public void CreatesLotsOfEntities()
+        {
+            var entitiesToCreate = (ulong)Math.Pow(2, 13);
+            var entities = world.CreateEntities(entitiesToCreate);
+
+            foreach (var entity in entities)
+            {
+                Assert.IsTrue(entity.ExistsInWorld());
+            }
+
+            Assert.AreEqual(entitiesToCreate, entities.Count());
+            Assert.AreEqual(entitiesToCreate, world.EntityCount());
         }  
         
         [Test]

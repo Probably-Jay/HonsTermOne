@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: EntityCreator
   m_EditorClassIdentifier: 
   worldProvider: {fileID: 11400000, guid: e7ed2aa7e968a424c97152871aeb3465, type: 2}
+  entitiesToCreate: 100

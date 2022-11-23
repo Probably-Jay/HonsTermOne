@@ -134,12 +134,14 @@ namespace ECS.Internal.Types
             var index = element.EntityIDIndex;
 
             if (IndexOutOfRange(index)) 
-                Reserve(index);
+                IncreaseCapacity();
 
             data[index] = element;
         }
 
+
         public bool IndexOutOfRange(ulong index) => index >= SizeReserved;
+        private void IncreaseCapacity() => Reserve(SizeReserved * 2);
 
         private void Reserve(ulong dataLength)
         {
