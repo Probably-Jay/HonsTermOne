@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ECS.Public;
 using ECS.Public.Attributes;
+using ECS.Public.Classes;
 
 namespace ECS.Internal.Types
 {

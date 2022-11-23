@@ -1,6 +1,6 @@
-﻿using ECS.Internal.Interfaces;
-using ECS.Public;
-using ECS.Public.Attributes;
+﻿using ECS.Public.Attributes;
+using ECS.Public.Classes;
+using ECS.Public.Interfaces;
 using UnityEngine;
 
 namespace ECS.Scripts.New_Folder

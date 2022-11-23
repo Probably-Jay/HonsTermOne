@@ -1,20 +1,20 @@
-﻿using ECS.Internal.Interfaces;
-using ECS.Internal.Types;
+﻿using ECS.Internal.Types;
+using ECS.Public.Interfaces;
 
-namespace ECS.Public
+namespace ECS.Public.Classes
 {
-    public interface IUpdatableEntity
+    public interface ISystemEntityView
     {
         Entity Entity { get; }
         ref T GetComponent<T>() where T : struct, IComponentData; 
     }
     
-    public readonly struct UpdatableEntity : IUpdatableEntity
+    public readonly struct SystemEntityViewView : ISystemEntityView
     {
         public Entity Entity { get; }
         private readonly IComponentAnymap componentAnymapReference;
         
-        internal UpdatableEntity(Entity entity, IComponentAnymap componentAnymapReference)
+        internal SystemEntityViewView(Entity entity, IComponentAnymap componentAnymapReference)
         {
             Entity = entity;
             this.componentAnymapReference = componentAnymapReference;

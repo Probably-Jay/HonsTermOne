@@ -1,8 +1,9 @@
 ﻿using System;
+using ECS.Internal.Factories;
 using ECS.Internal.Interfaces;
 using ECS.Internal.Types;
 
-namespace ECS.Public
+namespace ECS.Public.Classes
 {
     public readonly struct Entity : IEntity, IEquatable<Entity>
     {

@@ -1,8 +1,8 @@
 ﻿using System;
 using ECS.Internal.Extentions;
-using ECS.Public;
+using ECS.Public.Classes;
 using JetBrains.Annotations;
-using Entity = ECS.Public.Entity;
+using Entity = ECS.Public.Classes.Entity;
 
 namespace ECS.Internal.Types
 {

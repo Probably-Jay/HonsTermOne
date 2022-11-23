@@ -1,4 +1,4 @@
-﻿using Entity = ECS.Public.Entity;
+﻿using Entity = ECS.Public.Classes.Entity;
 
 namespace ECS.Internal.Interfaces
 {

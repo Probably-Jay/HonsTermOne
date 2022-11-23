@@ -1,7 +1,8 @@
 ﻿using System;
 using ECS.Internal.Interfaces;
+using ECS.Public.Interfaces;
 
-namespace ECS.Public
+namespace ECS.Public.Classes
 {
     public struct Component<T> : IComponent, IEquatable<Component<T>> where T : struct, IComponentData
     {

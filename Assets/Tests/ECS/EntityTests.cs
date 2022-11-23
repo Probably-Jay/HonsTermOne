@@ -1,9 +1,10 @@
 ﻿using System.Linq;
 using ECS.Internal.Extentions;
 using ECS.Public;
+using ECS.Public.Classes;
 using NUnit.Framework;
 using UnityEngine;
-using Entity = ECS.Public.Entity;
+using Entity = ECS.Public.Classes.Entity;
 
 namespace Tests.ECS
 {

@@ -2,10 +2,10 @@
 using ECS.Internal.Exceptions;
 using ECS.Internal.Extentions;
 using ECS.Internal.Types;
-using ECS.Public;
+using ECS.Public.Classes;
 using JetBrains.Annotations;
 
-namespace ECS.Public
+namespace ECS.Internal.Factories
 {
    
     internal class EntityFactory

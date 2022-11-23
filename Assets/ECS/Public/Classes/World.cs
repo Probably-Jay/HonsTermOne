@@ -3,19 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using ECS.Internal.Exceptions;
 using ECS.Internal.Extentions;
-using ECS.Internal.Interfaces;
 using ECS.Internal.Types;
+using ECS.Public.Interfaces;
 
-namespace ECS.Public
+namespace ECS.Public.Classes
 {
-    
-    //public static class World
-
     public class World
     {
-        public static TypeRegistry TypeRegistry { get; } = new TypeRegistry();
+        public static TypeRegistry TypeRegistry { get; } = new();
         private EntityList EntityArray { get; }
         private OwningComponentAnymap ComponentArrays { get; } = new();
 
@@ -107,27 +103,7 @@ namespace ECS.Public
         {
             foreach (var type in types.Types)
             {
-                CallGenericFunctionFromType(type, nameof(AddComponent), entity);
-            }
-        }
-
-        private object CallGenericFunctionFromType(Type type, string function, Entity entity)
-        {
-            try
-            {
-                var method = GetType()
-                    .GetMethod(function, BindingFlags.Instance | BindingFlags.NonPublic)
-                    !.MakeGenericMethod(type)!;
-
-                return method!.Invoke(this, new object[] { entity });
-            }
-            catch (NullReferenceException)
-            {
-                throw new InvalidTypeListException();
-            }
-            catch (TargetInvocationException e)
-            {
-                throw e.InnerException!;
+                this.CallGenericFunctionFromType(type, nameof(AddComponent), entity);
             }
         }
 
@@ -219,8 +195,8 @@ namespace ECS.Public
 
     public class TypeRegistry
     {
-        public IReadOnlyCollection<TypeInfo> ComponentTypes { get; private set; }
-        public IReadOnlyCollection<TypeInfo> SystemTypes { get; private set; }
+        public IReadOnlyCollection<TypeInfo> ComponentTypes { get; private set; } = new List<TypeInfo>();
+        public IReadOnlyCollection<TypeInfo> SystemTypes { get; private set; } = new List<TypeInfo>();
 
         internal event Action OnUpdatedTypeRegistry;
 
@@ -232,14 +208,14 @@ namespace ECS.Public
         }
         public void RegisterTypesFromAssemblyContaining<TMarker>()
         {
-            ComponentTypes = AssemblyScanner.ScanForFromAssemblyContaining<IComponentData,TMarker>().ToList();;
+            ComponentTypes = AssemblyScanner.ScanForFromAssemblyContaining<IComponentData,TMarker>().ToList();
             SystemTypes = AssemblyScanner.ScanForFromAssemblyContaining<ISystemLogic,TMarker>().ToList();
             OnUpdatedTypeRegistry?.Invoke();
         } 
         public void RegisterTypesFromAssembliesContaining(Type assemblyMarker, params Type[] otherAssemblyMarkers)
         {
             var assemblyMarkers = new [] { assemblyMarker }.Concat(otherAssemblyMarkers).ToArray();
-            ComponentTypes = AssemblyScanner.ScanForFromAssembliesContaining<IComponentData>(assemblyMarkers).ToList();;
+            ComponentTypes = AssemblyScanner.ScanForFromAssembliesContaining<IComponentData>(assemblyMarkers).ToList();
             SystemTypes = AssemblyScanner.ScanForFromAssembliesContaining<ISystemLogic>(assemblyMarkers).ToList();
             OnUpdatedTypeRegistry?.Invoke();
         }

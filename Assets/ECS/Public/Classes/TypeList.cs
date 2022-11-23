@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using ECS.Internal.Exceptions;
-using ECS.Internal.Interfaces;
 using ECS.Internal.Types;
+using ECS.Public.Interfaces;
 using JetBrains.Annotations;
 
-namespace ECS.Public
+namespace ECS.Public.Classes
 {
-  
-    
     public interface ITypeListBuilder
     {
-        public IReadOnlyCollection<Type> Types { get; }
-
         public ITypeListBuilder AddType<T>() where T : struct, IComponentData;
         ITypeListBuilder AddType(Type type);
         public TypeList Complete();
@@ -24,7 +19,11 @@ namespace ECS.Public
     {
         private TypeList()
         { }
-        
+
+        public TypeList([NotNull] params Func<Type>[] safeTypeDelegateCollection)
+            : this(safeTypeDelegateCollection.Select(func => func()).ToArray())
+        { }
+
         internal TypeList([NotNull] params Type[] safeTypeCollection)
         {
             var typeBuilder = TypeList.Create();
@@ -33,15 +32,7 @@ namespace ECS.Public
 
             types = typeBuilder.Complete().types;
         }
-        public TypeList([NotNull] params Func<Type>[] safeTypeDelegateCollection)
-        {
-            var typeBuilder = TypeList.Create();
-            foreach (var func in safeTypeDelegateCollection) 
-                    typeBuilder = typeBuilder.AddType(func());
 
-            types = typeBuilder.Complete().types;
-        }
-        
         private readonly List<Type> types = new List<Type>();
         public IReadOnlyCollection<Type> Types => types;
         public static ITypeListBuilder Create() => new TypeList();
@@ -60,7 +51,7 @@ namespace ECS.Public
         public ITypeListBuilder AddType(Type type)
         {
             if (!AssemblyScanner.IsConcreteAndAssignableFrom<IComponentData>(type))
-                throw new InvalidTypesInTypeListException(type);
+                throw new InvalidTypesInTypeListException(nameof(type));
             
             types.Add(type);
             return this;

@@ -1,5 +1,5 @@
 ﻿using System;
-using ECS.Public;
+using ECS.Public.Classes;
 
 namespace ECS.Internal.Exceptions
 {

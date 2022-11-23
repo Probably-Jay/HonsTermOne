@@ -1,6 +1,6 @@
 ﻿using System;
-using ECS.Public;
 using ECS.Public.Attributes;
+using ECS.Public.Classes;
 
 namespace ECS.Internal.Exceptions
 {

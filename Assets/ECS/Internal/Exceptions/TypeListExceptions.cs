@@ -1,5 +1,5 @@
 ﻿using System;
-using ECS.Internal.Interfaces;
+using ECS.Public.Interfaces;
 
 namespace ECS.Internal.Exceptions
 {
@@ -23,7 +23,7 @@ namespace ECS.Internal.Exceptions
     
     public class InvalidTypesInTypeListException : Exception
     {
-        public InvalidTypesInTypeListException(Type type): base($"Type must be a struct deriving from {nameof(IComponentData)}.")
+        public InvalidTypesInTypeListException(string typeName): base($"Type {typeName} must be a struct deriving from {nameof(IComponentData)}.")
         { }
     }
 }

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ECS.Internal.Exceptions;
-using ECS.Internal.Interfaces;
-using ECS.Public;
-using Entity = ECS.Public.Entity;
+using ECS.Public.Classes;
+using ECS.Public.Interfaces;
+using Entity = ECS.Public.Classes.Entity;
 
 namespace ECS.Internal.Types
 {

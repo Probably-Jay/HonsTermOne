@@ -3,9 +3,10 @@ using ECS.Internal.Exceptions;
 using ECS.Internal.Extentions;
 using ECS.Internal.Helper;
 using ECS.Internal.Interfaces;
-using ECS.Public;
+using ECS.Public.Classes;
+using ECS.Public.Interfaces;
 using JetBrains.Annotations;
-using Entity = ECS.Public.Entity;
+using Entity = ECS.Public.Classes.Entity;
 using IComponent = ECS.Internal.Interfaces.IComponent;
 
 namespace ECS.Internal.Types
@@ -161,13 +162,14 @@ namespace ECS.Internal.Types
                 this.data = data;
             }
 
-            private ulong index = 0; // intentionally start at 0 to skip 0, first valid index always 1
+            // ReSharper disable once RedundantDefaultMemberInitializer
+            // intentionally start at 0 to skip 0, first valid index always 1
+            private ulong index = 0; 
             
-            //todo make this valid only?
             public bool MoveNext() => ++index < data.SizeReserved;
 
             public void Reset() => index = 0;
-            public ref T Current => ref data[(ulong)index];
+            public ref T Current => ref data[index];
 
             public void Dispose()
             { }

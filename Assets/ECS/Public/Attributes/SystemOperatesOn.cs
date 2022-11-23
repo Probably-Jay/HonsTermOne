@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using ECS.Internal.Interfaces;
 using ECS.Internal.Types;
+using ECS.Public.Interfaces;
 
 namespace ECS.Public.Attributes
 {

@@ -4,8 +4,10 @@ using ECS.Internal.Exceptions;
 using ECS.Internal.Extentions;
 using ECS.Internal.Interfaces;
 using ECS.Public;
+using ECS.Public.Classes;
+using ECS.Public.Interfaces;
 using NUnit.Framework;
-using Entity = ECS.Public.Entity;
+using Entity = ECS.Public.Classes.Entity;
 
 namespace Tests.ECS
 {

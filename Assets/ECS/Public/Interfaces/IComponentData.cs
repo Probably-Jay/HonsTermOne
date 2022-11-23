@@ -1,4 +1,4 @@
-﻿namespace ECS.Internal.Interfaces
+﻿namespace ECS.Public.Interfaces
 {
     public interface IComponentData
     {

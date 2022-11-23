@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using ECS.Internal.Interfaces;
 using ECS.Internal.Types;
+using ECS.Public.Interfaces;
 using JetBrains.Annotations;
 
-namespace ECS.Public
+namespace ECS.Public.Classes
 {
     internal interface IAnySystem
     {
@@ -28,7 +28,7 @@ namespace ECS.Public
         
         public void Update(float deltaTime, Entity entity)
         {
-            SystemLogic.Update(deltaTime, new UpdatableEntity(entity, operatingTypeArraysMappingReference));
+            SystemLogic.Update(deltaTime, new SystemEntityViewView(entity, operatingTypeArraysMappingReference));
         }
 
         public void ModifySystem([NotNull]Action<T> action) 

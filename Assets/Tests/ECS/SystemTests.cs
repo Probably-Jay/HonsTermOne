@@ -5,6 +5,8 @@ using ECS.Internal.Extentions;
 using ECS.Internal.Interfaces;
 using ECS.Public;
 using ECS.Public.Attributes;
+using ECS.Public.Classes;
+using ECS.Public.Interfaces;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;
 using NUnit.Framework;
@@ -30,7 +32,7 @@ namespace Tests.ECS
             DataModule = data;
         }
     
-        public void Update(float deltaTime, IUpdatableEntity entity)
+        public void Update(float deltaTime, ISystemEntityView entityView)
         {
             DataModule.Floop();
         }
@@ -39,10 +41,10 @@ namespace Tests.ECS
     [SystemOperatesOn(typeof(TestComponent), typeof(OtherTestComponent) )]
     public class ActualTestSystem : ISystemLogic
     {
-        public void Update(float deltaTime, IUpdatableEntity entity)
+        public void Update(float deltaTime, ISystemEntityView entityView)
         {
-            ref var test = ref entity.GetComponent<TestComponent>();
-            ref var other = ref entity.GetComponent<OtherTestComponent>();
+            ref var test = ref entityView.GetComponent<TestComponent>();
+            ref var other = ref entityView.GetComponent<OtherTestComponent>();
 
             other.Data++;
         }

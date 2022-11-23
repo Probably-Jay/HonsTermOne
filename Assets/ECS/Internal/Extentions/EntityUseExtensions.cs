@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using ECS.Internal.Interfaces;
-using ECS.Public;
+using ECS.Public.Classes;
+using ECS.Public.Interfaces;
 
 namespace ECS.Internal.Extentions
 {
