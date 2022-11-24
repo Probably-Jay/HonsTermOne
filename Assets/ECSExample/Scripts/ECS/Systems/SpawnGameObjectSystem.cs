@@ -5,14 +5,14 @@ using UnityEngine;
 
 namespace ECSExample.Scripts.Static
 {
-    [SystemOperatesOn(typeof(SpawnGameobjectComponent))]
+    [SystemOperatesOn( Contains = new [] { typeof(GameobjectComponent) })]
     public class SpawnGameObjectSystem : ISystemLogic
     {
         public GameObject Root { get; set; }
         
         public void Update(float deltaTime, ISystemEntityView entityView)
         {
-            ref var component = ref entityView.GetComponent<SpawnGameobjectComponent>();
+            ref var component = ref entityView.GetComponent<GameobjectComponent>();
             if(component.GameObject != null)
                 return;
 
@@ -25,11 +25,5 @@ namespace ECSExample.Scripts.Static
             gameObject.transform.position = position;
             component.GameObject = gameObject;
         }
-    }
-    
-    public struct SpawnGameobjectComponent : IComponentData
-    {
-        public int Spawned;
-        public GameObject GameObject;
     }
 }

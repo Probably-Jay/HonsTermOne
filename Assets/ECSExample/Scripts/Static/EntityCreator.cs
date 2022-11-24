@@ -11,7 +11,7 @@ namespace ECSExample.Scripts.Static
 
         public void CreateEntities()
         {
-            worldProvider.World.CreateEntities<SpawnGameobjectComponent>(entitiesToCreate);
+            worldProvider.World.CreateEntities<GameobjectComponent>(entitiesToCreate);
         }
     }
 

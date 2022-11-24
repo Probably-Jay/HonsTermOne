@@ -25,9 +25,10 @@ namespace ECS.Internal.Types
 
 
                 var operatingAttribute = type.GetCustomAttribute<SystemOperatesOn>()??throw new SystemDoesNotSpecifyOperatingTypesException(type);
-                var operatingTypeArrayRefs = GetOperatingTypeArrayRefs(componentArrays, operatingAttribute);
+                operatingAttribute.AssertValid(nameof(type));
                 
-                var system = (IAnySystem)Activator.CreateInstance(systemType, systemLogic, operatingTypeArrayRefs);
+                var operatingTypeArrayRefs = GetOperatingTypeArrayRefs(componentArrays, operatingAttribute);
+                var system = (IAnySystem)Activator.CreateInstance(systemType, systemLogic, operatingTypeArrayRefs, operatingAttribute);
 
                 systemCollection.Add(type, system);
             }
@@ -37,6 +38,6 @@ namespace ECS.Internal.Types
 
         private static IComponentAnymap GetOperatingTypeArrayRefs(OwningComponentAnymap componentArrays,
             SystemOperatesOn operatingAttribute) 
-            => componentArrays.GetNeededComponentArrays(operatingAttribute.ModifiesTypes);
+            => componentArrays.GetNeededComponentArrays(operatingAttribute);
     }
 }

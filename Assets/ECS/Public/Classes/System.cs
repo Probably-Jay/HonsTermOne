@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ECS.Internal.Types;
+using ECS.Public.Attributes;
 using ECS.Public.Interfaces;
 using JetBrains.Annotations;
 
@@ -9,20 +10,23 @@ namespace ECS.Public.Classes
     internal interface IAnySystem
     {
         IReadOnlyCollection<Type> ModifiesTypes { get; }
+        ITypeRestriction TypeRestriction { get; }
         void Update(float deltaTime, Entity entity);
     }
 
-
+    
     internal class System<T> : IAnySystem where T : ISystemLogic
     {
         private readonly IComponentAnymap operatingTypeArraysMappingReference;
         public IReadOnlyCollection<Type> ModifiesTypes => operatingTypeArraysMappingReference.Types;
         private T SystemLogic { get; }
+        public ITypeRestriction TypeRestriction { get; }
 
 
-        public System(T systemLogic, IComponentAnymap operatingTypeArrayRefs)
+        public System(T systemLogic, IComponentAnymap operatingTypeArrayRefs, ITypeRestriction typeRestrictions)
         {
             SystemLogic = systemLogic;
+            TypeRestriction = typeRestrictions;
             operatingTypeArraysMappingReference = operatingTypeArrayRefs;
         }
         

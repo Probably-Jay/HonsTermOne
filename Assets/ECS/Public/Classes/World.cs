@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using ECS.Internal.Extensions;
 using ECS.Internal.Types;
+using ECS.Public.Attributes;
 using ECS.Public.Interfaces;
 
 namespace ECS.Public.Classes
@@ -135,6 +136,27 @@ namespace ECS.Public.Classes
             return EntityExistsWithinWorld(entity) && ComponentArrays.ContainsComponent<T>(entity);
         }
 
+        private bool MatchesTypeRestriction(Entity entity, ITypeRestriction typeRestrictions)
+        {
+            if (typeRestrictions.HasNoRestrictions)
+                return true;
+            
+            if (typeRestrictions.Exactly.Length > 0)
+               return HasExactComponents(entity, typeRestrictions.Exactly);
+
+            if (!HasAnyComponents(entity, typeRestrictions.Contains))
+                return false;
+
+            return !HasAnyComponents(entity, typeRestrictions.Without);
+        }
+
+        internal bool HasExactComponents(in Entity entity, IReadOnlyCollection<Type> types) 
+            => ComponentArrays.EntityHasExactComponents(entity, types);
+
+        private bool HasAnyComponents(Entity entity, Type[] types)
+            => ComponentArrays.EntityHasAnyComponents(entity, types);
+        
+
         internal IReadOnlyCollection<Type> GetAllAttachedComponentTypes(in Entity entity)
         {
             entity.AssertIsNotNull();
@@ -153,32 +175,22 @@ namespace ECS.Public.Classes
 
         public void Tick(float deltaTime)
         {
-            // SystemList.ForeachSystem((_, system) =>
-            // {
-            //     var operationTypes = system.ModifiesTypes;
-            //
-            //     EntityArray.ForeachExtantEntity((ref Entity entity) =>
-            //         {
-            //             if (entity.HasExactComponents(new TypeList(operationTypes.ToArray())))
-            //                 system.Update(deltaTime, entity);
-            //         }
-            //     );
-            // });
             EntityArray.ForeachExtantEntity(entity => 
             { 
                 SystemList.ForeachSystem((_, system) =>
                     {
                         var operationTypes = system.ModifiesTypes;
-
-                        if (entity.HasExactComponents(new TypeList(operationTypes.ToArray())))
+                        var typeRestrictions = system.TypeRestriction;
+                        
+                        if (MatchesTypeRestriction(entity, typeRestrictions))
                             system.Update(deltaTime, entity);
                     }
                 );
             });
         }
-    
 
        
+
 
         public void ModifySystem<T>([NotNull] Action<T> action) where T : class, ISystemLogic 
             => SystemList.ModifySystem(action);
@@ -186,8 +198,7 @@ namespace ECS.Public.Classes
         public TRet QuerySystem<T, TRet>([NotNull] Func<T, TRet> action) where T : class, ISystemLogic 
             => SystemList.QuerySystem(action);
 
-        internal bool HasExactComponents(in Entity entity, IReadOnlyCollection<Type> types) 
-            => ComponentArrays.EntityHasExactComponents(entity, types);
+       
     }
 
 

@@ -38,7 +38,7 @@ namespace Tests.ECS
         }
     }
     
-    [SystemOperatesOn(typeof(TestComponent), typeof(OtherTestComponent) )]
+    [SystemOperatesOn(Exactly = new []{typeof(TestComponent), typeof(OtherTestComponent)} )]
     public class ActualTestSystem : ISystemLogic
     {
         public void Update(float deltaTime, ISystemEntityView entityView)

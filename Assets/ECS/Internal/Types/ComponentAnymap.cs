@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ECS.Internal.Exceptions;
+using ECS.Public.Attributes;
 using ECS.Public.Classes;
 using ECS.Public.Interfaces;
 using Entity = ECS.Public.Classes.Entity;
@@ -132,17 +133,20 @@ namespace ECS.Internal.Types
         }
 
 
-        public IComponentAnymap GetNeededComponentArrays(IReadOnlyList<Type> operationTypes)
+        public IComponentAnymap GetNeededComponentArrays(SystemOperatesOn operationTypes)
         {
-            return CreateSubsetView(operationTypes);
+            var exactly = operationTypes.Exactly;
+            var contains = operationTypes.Contains;
+
+            return CreateSubsetView(exactly.Concat(contains).Distinct().ToList());
         }
 
 
-        public bool EntityHasExactComponents(in Entity entity, IReadOnlyCollection<Type> types)
+        public bool EntityHasExactComponents(in Entity entity, IReadOnlyCollection<Type> typeCollection)
         {
             foreach (var (type, container) in MappingEnumerator)
             {
-                if (types.Contains(type))
+                if (typeCollection.Contains(type))
                 {
                     if (!container.IsValidComponentOfEntity(entity))
                         return false;
@@ -157,6 +161,19 @@ namespace ECS.Internal.Types
             return true;
         }
 
+        public bool EntityHasAnyComponents(Entity entity, Type[] typeCollection)
+        {
+            foreach (var (type, container) in MappingEnumerator)
+            {
+                if (!typeCollection.Contains(type)) 
+                    continue;
+                
+                if (container.IsValidComponentOfEntity(entity))
+                    return true;
+            }
+
+            return false;
+        }
     }
 
     internal class ViewingComponentAnymap : ComponentAnymapBase
