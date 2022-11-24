@@ -8,10 +8,10 @@ using JetBrains.Annotations;
 
 namespace ECS.Public.Classes
 {
-    public interface ITypeListBuilder
+
+    public interface ITypeListBuilder 
     {
         public ITypeListBuilder AddType<T>() where T : struct, IComponentData;
-        ITypeListBuilder AddType(Type type);
         public TypeList Complete();
     }
 
@@ -20,13 +20,13 @@ namespace ECS.Public.Classes
         private TypeList()
         { }
 
-        public TypeList([NotNull] params Func<Type>[] safeTypeDelegateCollection)
+        protected TypeList([NotNull] params Func<Type>[] safeTypeDelegateCollection)
             : this(safeTypeDelegateCollection.Select(func => func()).ToArray())
         { }
 
         internal TypeList([NotNull] params Type[] safeTypeCollection)
         {
-            var typeBuilder = TypeList.Create();
+            var typeBuilder = TypeList.CreateInternal();
             foreach (var type in safeTypeCollection) 
                 typeBuilder = typeBuilder.AddType(type);
 
@@ -36,6 +36,7 @@ namespace ECS.Public.Classes
         private readonly List<Type> types = new List<Type>();
         public IReadOnlyCollection<Type> Types => types;
         public static ITypeListBuilder Create() => new TypeList();
+        internal static TypeList CreateInternal() => new TypeList();
         
         public ITypeListBuilder AddType<T>() where T : struct, IComponentData
         {
@@ -48,7 +49,7 @@ namespace ECS.Public.Classes
             return typeof(T);
         }
 
-        public ITypeListBuilder AddType(Type type)
+        internal TypeList AddType(Type type)
         {
             if (!AssemblyScanner.IsConcreteAndAssignableFrom<IComponentData>(type))
                 throw new InvalidTypesInTypeListException(nameof(type));

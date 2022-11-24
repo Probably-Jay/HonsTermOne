@@ -28,12 +28,20 @@ namespace Tests.ECS
             typeof(TestComponent),
             typeof(OtherTestComponent),
             typeof(TestComponentValData),
-            typeof(AnotherTestComponent)
+            typeof(AnotherTestComponent),
+            typeof(AComponent),
+            typeof(BComponent),
+            typeof(CComponent),
+            typeof(DComponent),
+            typeof(EComponent),
         }; 
         
         public static readonly Type[] AllSystemTypes = {
             typeof(TrivialTestSystem),
             typeof(ActualTestSystem),
+            typeof(ContainsA),
+            typeof(ContainsBAndC),
+            typeof(ContainsDWithoutE),
         };
     }
     public class WorldTests

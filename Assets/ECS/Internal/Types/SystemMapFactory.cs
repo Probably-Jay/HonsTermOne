@@ -25,7 +25,7 @@ namespace ECS.Internal.Types
 
 
                 var operatingAttribute = type.GetCustomAttribute<SystemOperatesOn>()??throw new SystemDoesNotSpecifyOperatingTypesException(type);
-                operatingAttribute.AssertValid(nameof(type));
+                operatingAttribute.AssertValid(type.ToString());
                 
                 var operatingTypeArrayRefs = GetOperatingTypeArrayRefs(componentArrays, operatingAttribute);
                 var system = (IAnySystem)Activator.CreateInstance(systemType, systemLogic, operatingTypeArrayRefs, operatingAttribute);

@@ -48,7 +48,61 @@ namespace Tests.ECS
 
             other.Data++;
         }
+    }
     
+    public struct AComponent : IComponentData
+    {
+        public int Data;
+    }
+    
+    [SystemOperatesOn(Contains = new []{typeof(AComponent)} )]
+    public class ContainsA : ISystemLogic
+    {
+        public void Update(float deltaTime, ISystemEntityView entityView)
+        {
+            ref var aComponent = ref entityView.GetComponent<AComponent>();
+            aComponent.Data++;
+        }
+    } 
+    
+    public struct BComponent : IComponentData
+    {
+        public int Data;
+    }public struct CComponent : IComponentData
+    {
+        public int Data;
+    }
+    
+    [SystemOperatesOn(Contains = new []{typeof(BComponent), typeof(CComponent)} )]
+    public class ContainsBAndC : ISystemLogic
+    {
+        public void Update(float deltaTime, ISystemEntityView entityView)
+        {
+            ref var bComponent = ref entityView.GetComponent<BComponent>();
+            ref var cComponent = ref entityView.GetComponent<CComponent>();
+
+            bComponent.Data++;
+            cComponent.Data++;
+        }
+    }  
+    
+    public struct DComponent : IComponentData
+    {
+        public int Data;
+    }public struct EComponent : IComponentData
+    {
+        public int Data;
+    }
+    
+    [SystemOperatesOn(Contains = new []{typeof(DComponent)}, Without = new []{typeof(EComponent)})]
+    public class ContainsDWithoutE : ISystemLogic
+    {
+        public void Update(float deltaTime, ISystemEntityView entityView)
+        {
+            ref var dComponent = ref entityView.GetComponent<DComponent>();
+
+            dComponent.Data++;
+        }
     }
     
     public class MyType : TypeList
@@ -96,7 +150,7 @@ namespace Tests.ECS
         
         
         [Test]
-        public void SystemCanTickEntityWhenComponentsMatch()
+        public void ActualSystemCanTickEntityWhenComponentsMatch()
         {
             var entity = world.CreateEntities(10, new MyType()).ToList();
             world.Tick(1/50f);
@@ -109,7 +163,7 @@ namespace Tests.ECS
         } 
         
         [Test]
-        public void SystemDoesNotTickEntityWhenComponentsDontMatch()
+        public void ActualSystemDoesNotTickEntityWhenComponentsDontMatch()
         {
             var entity = world.CreateEntities<OtherTestComponent>(10).ToList();
             world.Tick(1/50f);
@@ -119,6 +173,96 @@ namespace Tests.ECS
             world.Tick(1/50f);
             
             Assert.AreEqual(0, entity[0].ReadComponent<OtherTestComponent>().ComponentData.Data);
+        }
+
+        [Test]
+        public void ContainsASystemTicksWhenEntityComponentsMatch()
+        {
+            {
+                var type = TypeList.Create().AddType<AComponent>().Complete();
+                var entity = world.CreateEntities(10, type).ToList();
+                world.Tick(1 / 50f);
+
+                Assert.AreEqual(1, entity[0].ReadComponent<AComponent>().ComponentData.Data);
+            }
+            world.DestroyAllEntities();
+            {
+                var type = TypeList.Create().AddType<AComponent>().AddType<BComponent>().Complete();
+                var entity = world.CreateEntities(10, type).ToList();
+                world.Tick(1 / 50f);
+
+                Assert.AreEqual(1, entity[0].ReadComponent<AComponent>().ComponentData.Data);
+            }
+        }
+
+        [Test]
+        public void ContainsBandCSystemTicksWhenEntityComponentsMatch()
+        {
+            {
+                var type = TypeList.Create().AddType<BComponent>().AddType<CComponent>().Complete();
+                var entity = world.CreateEntities(10, type).ToList();
+                world.Tick(1 / 50f);
+
+                Assert.AreEqual(1, entity[0].ReadComponent<BComponent>().ComponentData.Data);
+                Assert.AreEqual(1, entity[0].ReadComponent<CComponent>().ComponentData.Data);
+            }
+            world.DestroyAllEntities();
+            {
+                var type = TypeList.Create().AddType<BComponent>().AddType<CComponent>().AddType<DComponent>().Complete();
+                var entity = world.CreateEntities(10, type).ToList();
+                world.Tick(1 / 50f);
+
+                Assert.AreEqual(1, entity[0].ReadComponent<BComponent>().ComponentData.Data);
+                Assert.AreEqual(1, entity[0].ReadComponent<CComponent>().ComponentData.Data);
+            }
+        }
+
+        [Test]
+        public void ContainsDWithoutESystemTicksWhenEntityComponentsMatch()
+        {
+            {
+                var type = TypeList.Create().AddType<DComponent>().Complete();
+                var entity = world.CreateEntities(10, type).ToList();
+                world.Tick(1 / 50f);
+
+                Assert.AreEqual(1, entity[0].ReadComponent<DComponent>().ComponentData.Data);
+            }
+            world.DestroyAllEntities();
+            {
+                var type = TypeList.Create().AddType<AComponent>().AddType<DComponent>().Complete();
+                var entity = world.CreateEntities(10, type).ToList();
+                world.Tick(1 / 50f);
+
+                Assert.AreEqual(1, entity[0].ReadComponent<DComponent>().ComponentData.Data);
+            }
+        } 
+        
+        [Test]
+        public void ContainsDWithoutESystemDoesNotTickWhenEntityComponentsDontMatch()
+        {
+            {
+                var type = TypeList.Create().AddType<DComponent>().AddType<EComponent>().Complete();
+                var entity = world.CreateEntities(10, type).ToList();
+                world.Tick(1 / 50f);
+
+                Assert.AreEqual(0, entity[0].ReadComponent<DComponent>().ComponentData.Data);
+            }
+            world.DestroyAllEntities();
+            {
+                var type = TypeList.Create().AddType<EComponent>().Complete();
+                var entity = world.CreateEntities(10, type).ToList();
+                world.Tick(1 / 50f);
+
+                try
+                {
+                    _ = entity[0].ReadComponent<DComponent>().ComponentData.Data;
+                    Assert.Fail();
+                }
+                catch (Exception)
+                {
+                    //
+                }
+            }
         }
 
         [TearDown]

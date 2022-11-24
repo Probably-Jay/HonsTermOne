@@ -32,6 +32,7 @@ namespace ECS.Public.Attributes
 
             AssertIfExactComponentsDefinedThenNothingElseIs(typeName);
             AssertIfNoneComponentsDefinedThenAnyAlsoIs(typeName);
+            AssertIfNoneComponentsDoNotCoverAnyComponents(typeName);
         }
 
         public bool HasNoRestrictions => Exactly.Length == 0 && Contains.Length == 0 && Without.Length == 0;
@@ -48,6 +49,7 @@ namespace ECS.Public.Attributes
         {
             if(Exactly.Length == 0)
                 return;
+            
             if (Contains.Length > 0 || Without.Length > 0)
                 throw new SystemUpdateFunctionDefinesNonsensicalQueryRelationship(typeName);
         }
@@ -56,8 +58,14 @@ namespace ECS.Public.Attributes
         {
             if(Without.Length == 0)
                 return;
-            if (Contains.Length > 0)
+            if (Contains.Length == 0)
                 throw new SystemUpdateFunctionDefinesIncompleteQueryRelationship(typeName);
+        }
+
+        private void AssertIfNoneComponentsDoNotCoverAnyComponents(string typeName)
+        {
+            if (Contains.Intersect(Without).Any())
+                throw new SystemUpdateFunctionDefinesNonsensicalQueryRelationship(typeName);
         }
     }
 
@@ -76,8 +84,8 @@ namespace ECS.Public.Attributes
     internal class SystemUpdateFunctionDefinesNonsensicalQueryRelationship : Exception
     {
         public SystemUpdateFunctionDefinesNonsensicalQueryRelationship(string typeName) : base($"System {typeName} " +
-            $"update function defines mutually exclusive or redundant {nameof(SystemOperatesOn.Exactly)} " +
-            $"and {nameof(SystemOperatesOn.Contains)} or {nameof(SystemOperatesOn.Without)}")
+            $"update function defines redundant {nameof(SystemOperatesOn.Exactly)} " +
+            $"and \"{nameof(SystemOperatesOn.Contains)}\" or mutually exclusive \"{nameof(SystemOperatesOn.Contains)}\" and \"{nameof(SystemOperatesOn.Without)}\"")
         { }
     }
     
