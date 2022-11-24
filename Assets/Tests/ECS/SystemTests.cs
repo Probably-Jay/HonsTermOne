@@ -152,7 +152,7 @@ namespace Tests.ECS
         [Test]
         public void ActualSystemCanTickEntityWhenComponentsMatch()
         {
-            var entity = world.CreateEntities(10, new MyType()).ToList();
+            var entity = world.CreateEntitiesWithComponents(10, new MyType()).ToList();
             world.Tick(1/50f);
 
             Assert.AreEqual(1, entity[0].ReadComponent<OtherTestComponent>().ComponentData.Data);
@@ -165,7 +165,7 @@ namespace Tests.ECS
         [Test]
         public void ActualSystemDoesNotTickEntityWhenComponentsDontMatch()
         {
-            var entity = world.CreateEntities<OtherTestComponent>(10).ToList();
+            var entity = world.CreateEntitiesWithComponent<OtherTestComponent>(10).ToList();
             world.Tick(1/50f);
 
             Assert.AreEqual(0, entity[0].ReadComponent<OtherTestComponent>().ComponentData.Data);
@@ -180,7 +180,7 @@ namespace Tests.ECS
         {
             {
                 var type = TypeList.Create().AddType<AComponent>().Complete();
-                var entity = world.CreateEntities(10, type).ToList();
+                var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
                 Assert.AreEqual(1, entity[0].ReadComponent<AComponent>().ComponentData.Data);
@@ -188,7 +188,7 @@ namespace Tests.ECS
             world.DestroyAllEntities();
             {
                 var type = TypeList.Create().AddType<AComponent>().AddType<BComponent>().Complete();
-                var entity = world.CreateEntities(10, type).ToList();
+                var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
                 Assert.AreEqual(1, entity[0].ReadComponent<AComponent>().ComponentData.Data);
@@ -200,7 +200,7 @@ namespace Tests.ECS
         {
             {
                 var type = TypeList.Create().AddType<BComponent>().AddType<CComponent>().Complete();
-                var entity = world.CreateEntities(10, type).ToList();
+                var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
                 Assert.AreEqual(1, entity[0].ReadComponent<BComponent>().ComponentData.Data);
@@ -209,7 +209,7 @@ namespace Tests.ECS
             world.DestroyAllEntities();
             {
                 var type = TypeList.Create().AddType<BComponent>().AddType<CComponent>().AddType<DComponent>().Complete();
-                var entity = world.CreateEntities(10, type).ToList();
+                var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
                 Assert.AreEqual(1, entity[0].ReadComponent<BComponent>().ComponentData.Data);
@@ -222,7 +222,7 @@ namespace Tests.ECS
         {
             {
                 var type = TypeList.Create().AddType<DComponent>().Complete();
-                var entity = world.CreateEntities(10, type).ToList();
+                var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
                 Assert.AreEqual(1, entity[0].ReadComponent<DComponent>().ComponentData.Data);
@@ -230,7 +230,7 @@ namespace Tests.ECS
             world.DestroyAllEntities();
             {
                 var type = TypeList.Create().AddType<AComponent>().AddType<DComponent>().Complete();
-                var entity = world.CreateEntities(10, type).ToList();
+                var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
                 Assert.AreEqual(1, entity[0].ReadComponent<DComponent>().ComponentData.Data);
@@ -242,7 +242,7 @@ namespace Tests.ECS
         {
             {
                 var type = TypeList.Create().AddType<DComponent>().AddType<EComponent>().Complete();
-                var entity = world.CreateEntities(10, type).ToList();
+                var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
                 Assert.AreEqual(0, entity[0].ReadComponent<DComponent>().ComponentData.Data);
@@ -250,7 +250,7 @@ namespace Tests.ECS
             world.DestroyAllEntities();
             {
                 var type = TypeList.Create().AddType<EComponent>().Complete();
-                var entity = world.CreateEntities(10, type).ToList();
+                var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
                 try

@@ -24,11 +24,13 @@ namespace ECS.Internal.Types
                 var systemLogic = (ISystemLogic)Activator.CreateInstance(type);
 
 
-                var operatingAttribute = type.GetCustomAttribute<SystemOperatesOn>()??throw new SystemDoesNotSpecifyOperatingTypesException(type);
+                var operatingAttribute = type.GetCustomAttribute<SystemOperatesOn>() ??
+                                         throw new SystemDoesNotSpecifyOperatingTypesException(type);
                 operatingAttribute.AssertValid(type.ToString());
-                
+
                 var operatingTypeArrayRefs = GetOperatingTypeArrayRefs(componentArrays, operatingAttribute);
-                var system = (IAnySystem)Activator.CreateInstance(systemType, systemLogic, operatingTypeArrayRefs, operatingAttribute);
+                var system = (IAnySystem)Activator.CreateInstance(systemType, systemLogic, operatingTypeArrayRefs,
+                    operatingAttribute);
 
                 systemCollection.Add(type, system);
             }

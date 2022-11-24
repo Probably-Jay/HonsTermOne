@@ -1,4 +1,5 @@
 ﻿using ECS.Public.Interfaces;
+using ECSExample.Scripts.ECS.TypeDefinitions;
 using UnityEngine;
 
 namespace ECSExample.Scripts.Static
@@ -11,7 +12,7 @@ namespace ECSExample.Scripts.Static
 
         public void CreateEntities()
         {
-            worldProvider.World.CreateEntities<GameobjectComponent>(entitiesToCreate);
+            worldProvider.World.CreateEntitiesWithComponents<CubeType>(entitiesToCreate);
         }
     }
 

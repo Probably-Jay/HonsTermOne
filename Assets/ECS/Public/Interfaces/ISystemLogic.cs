@@ -1,4 +1,5 @@
 ﻿using ECS.Public.Classes;
+using JetBrains.Annotations;
 
 namespace ECS.Public.Interfaces
 {

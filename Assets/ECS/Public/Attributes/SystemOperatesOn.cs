@@ -4,6 +4,7 @@ using System.Linq;
 using ECS.Internal.Types;
 using ECS.Public.Classes;
 using ECS.Public.Interfaces;
+using JetBrains.Annotations;
 
 namespace ECS.Public.Attributes
 {
@@ -71,13 +72,15 @@ namespace ECS.Public.Attributes
 
     internal class SystemUpdateFunctionDefinesNonComponentTypes : Exception
     {
-        public SystemUpdateFunctionDefinesNonComponentTypes(string typeName) : base($"System {typeName} update function defines type not deriving from {typeof(IComponentData)}")
+        public SystemUpdateFunctionDefinesNonComponentTypes(string typeName) : base(
+            $"System {typeName} cannot operate on types not deriving from {typeof(IComponentData)}")
         { }
     }
 
     internal class SystemUpdateFunctionDefinesDuplicateTypesException : Exception
     {
-        public SystemUpdateFunctionDefinesDuplicateTypesException(string typeName) : base($"System {typeName} update function defines type to modify multiple times")
+        public SystemUpdateFunctionDefinesDuplicateTypesException(string typeName) : base(
+            $"System {typeName} cannot define the same type to operate on multiple times")
         { }
     }
     

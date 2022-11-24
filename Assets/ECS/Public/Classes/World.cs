@@ -41,14 +41,19 @@ namespace ECS.Public.Classes
             return EntityArray.CreateEntity(this);
         }
         
-        public Entity CreateEntity<T>() where T : struct, IComponentData
+        public Entity CreateEntityWithComponent<T>() where T : struct, IComponentData
         {
             var entity = CreateEntity();
             AddComponent<T>(entity);
             return entity;
+        }    
+        
+        public Entity CreateEntityWithComponents<T>() where T : TypeList, new()
+        {
+            return CreateEntityWithComponents(new T());
         }   
         
-        public Entity CreateEntity(TypeList types)
+        public Entity CreateEntityWithComponents(TypeList types)
         {
             var entity = CreateEntity();
             AddComponents(entity, types);
@@ -58,11 +63,14 @@ namespace ECS.Public.Classes
         public ICollection<Entity> CreateEntities(ulong numberOfEntitiesToCreate) 
             => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity());
         
-        public ICollection<Entity> CreateEntities<T>(ulong numberOfEntitiesToCreate) where T : struct, IComponentData
-            => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity<T>()); 
+        public ICollection<Entity> CreateEntitiesWithComponent<T>(ulong numberOfEntitiesToCreate) where T : struct, IComponentData
+            => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntityWithComponent<T>()); 
         
-        public ICollection<Entity> CreateEntities(ulong numberOfEntitiesToCreate, TypeList types) 
-            => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity(types));
+        public ICollection<Entity> CreateEntitiesWithComponents<T>(ulong numberOfEntitiesToCreate) where T : TypeList, new()
+            => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntityWithComponents(new T())); 
+        
+        public ICollection<Entity> CreateEntitiesWithComponents(ulong numberOfEntitiesToCreate, TypeList types) 
+            => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntityWithComponents(types));
 
 
         private ICollection<Entity> CreateEntitiesWithFunction(ulong numberOfEntitiesToCreate, Func<Entity> entityCreationFunction)

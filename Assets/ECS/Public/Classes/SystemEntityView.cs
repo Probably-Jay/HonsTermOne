@@ -1,4 +1,6 @@
-﻿using ECS.Internal.Types;
+﻿using System;
+using ECS.Internal.Exceptions;
+using ECS.Internal.Types;
 using ECS.Public.Interfaces;
 
 namespace ECS.Public.Classes
@@ -20,8 +22,18 @@ namespace ECS.Public.Classes
             this.componentAnymapReference = componentAnymapReference;
         }
 
-        public ref T GetComponent<T>() where T : struct, IComponentData 
-            => ref componentAnymapReference.GetComponent<T>(Entity).ComponentData;
+        public ref T GetComponent<T>() where T : struct, IComponentData
+        {
+            try
+            {
+                return ref componentAnymapReference.GetComponent<T>(Entity).ComponentData;
+            }
+            catch (MissingComponentTypeException e)
+            {
+                // ReSharper disable once PossibleIntendedRethrow
+                throw e;
+            }
+        }
     }
 
   

@@ -38,7 +38,7 @@ namespace Tests.ECS
         [Test]
         public void CreatedEntityHasType()
         {
-            var entity = world.CreateEntity<TestComponent>();
+            var entity = world.CreateEntityWithComponent<TestComponent>();
             
             Assert.IsTrue(entity.HasComponent<TestComponent>());
         } 
@@ -51,7 +51,7 @@ namespace Tests.ECS
                 .AddType<OtherTestComponent>()
                 .Complete();
             
-            var entity = world.CreateEntity(types);
+            var entity = world.CreateEntityWithComponents(types);
 
             var typesOnEntity = entity.GetAllAttachedComponentTypes();
             CollectionAssert.AreEquivalent(typesOnEntity,types.Types);
@@ -73,7 +73,7 @@ namespace Tests.ECS
         {
             var types = new MyType();
             
-            var entity = world.CreateEntity(types);
+            var entity = world.CreateEntityWithComponents(types);
 
             var typesOnEntity = entity.GetAllAttachedComponentTypes();
             CollectionAssert.AreEquivalent(typesOnEntity,types.Types);
@@ -123,8 +123,8 @@ namespace Tests.ECS
         [Test]
         public void CreatesMultipleEntitiesWithComponent()
         {
-            var entities = world.CreateEntities<TestComponent>(75);
-            var otherEntities = world.CreateEntities<OtherTestComponent>(25);
+            var entities = world.CreateEntitiesWithComponent<TestComponent>(75);
+            var otherEntities = world.CreateEntitiesWithComponent<OtherTestComponent>(25);
 
             foreach (var entity in entities)
             {
@@ -157,14 +157,14 @@ namespace Tests.ECS
                     .AddType<OtherTestComponent>()
                     .Complete();
                 
-                var entities = world.CreateEntities(75, types);
+                var entities = world.CreateEntitiesWithComponents(75, types);
 
                 var otherTypes = TypeList.Create()
                     .AddType<TestComponent>()
                     .AddType<AnotherTestComponent>()
                     .Complete();
                 
-                var otherEntities = world.CreateEntities(25, otherTypes);
+                var otherEntities = world.CreateEntitiesWithComponents(25, otherTypes);
             
                 
                 foreach (var entity in entities)
