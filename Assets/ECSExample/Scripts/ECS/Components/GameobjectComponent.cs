@@ -1,7 +1,7 @@
 ﻿using ECS.Public.Interfaces;
 using UnityEngine;
 
-namespace ECSExample.Scripts.Static
+namespace ECSExample.Scripts.ECS.Components
 {
     public struct GameobjectComponent : IComponentData
     {

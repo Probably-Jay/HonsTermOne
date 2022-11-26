@@ -1,7 +1,9 @@
 ﻿using ECS.Internal.Exceptions;
 using ECS.Internal.Types;
+using ECS.Public.Attributes;
 using ECS.Public.Classes;
 using ECS.Public.Interfaces;
+using JetBrains.Annotations;
 using Entity = ECS.Public.Classes.Entity;
 
 namespace ECS.Internal.Extensions
@@ -33,6 +35,20 @@ namespace ECS.Internal.Extensions
             if (thisId.ID != other.ID)
                 throw new EntityIDMismatchException();
             return thisId.CompareTo(other) > 0;
+        }
+        
+        internal static bool MatchesTypeRestriction(this Entity entity, [NotNull] ITypeRestriction typeRestrictions)
+        {
+            if (typeRestrictions.HasNoRestrictions)
+                return true;
+            
+            if (typeRestrictions.Exactly.Length > 0)
+                return entity.HasExactComponents(typeRestrictions.Exactly);
+
+            if (!entity.HasAnyComponents(typeRestrictions.Contains))
+                return false;
+
+            return !entity.HasAnyComponents(typeRestrictions.Without);
         }
     }
 }

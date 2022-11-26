@@ -1,30 +1,29 @@
- using System;
-using System.Collections;
-using System.Collections.Generic;
+using ECS.Public.Extensions;
 using ECSExample.Scripts.Static;
 using UnityEngine;
 
-public class SceneStartup : MonoBehaviour
+namespace ECSExample.Scripts.Monobehaviours
 {
-    [SerializeField] private WorldProvider worldProvider;
-    [SerializeField] private EntityCreator entityCreator;
-
-    private void Awake()
+    public class SceneStartup : MonoBehaviour
     {
-        worldProvider.Initialise();
+        [SerializeField] private WorldProvider worldProvider;
+        [SerializeField] private EntityCreator entityCreator;
 
-       
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
+        private void Awake()
         {
-            entityCreator.CreateEntities();
-            var world = worldProvider.World;
+            worldProvider.Initialise();
+        }
 
-            var entites = world.EntityCount();
-            Debug.Log($"Entities {entites} exist");
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                entityCreator.CreateEntities();
+                var world = worldProvider.World;
+
+                var entities = world.EntityCount();
+                Debug.Log($"Entities {entities} exist");
+            }
         }
     }
 }

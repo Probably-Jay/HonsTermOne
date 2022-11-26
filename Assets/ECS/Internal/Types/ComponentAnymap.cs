@@ -16,6 +16,11 @@ namespace ECS.Internal.Types
         IReadOnlyCollection<Type> Types { get; }
        // ref Component<T> Get<T>(Entity entity) where T : struct, IComponentData;
         ref ComponentEcs<T> GetComponent<T>(Entity entity) where T : struct, IComponentData;
+        bool ContainsComponent<T>(in Entity entity) where T : struct, IComponentData;
+        bool ContainsComponent<T>(in ComponentEcs<T> componentEcs) where T : struct, IComponentData;
+        bool EntityHasExactComponents(in Entity entity, IReadOnlyCollection<Type> types);
+        bool EntityHasAnyComponents(Entity entity, Type[] types);
+        IReadOnlyCollection<Type> GetTypesOfAllAttachedComponents(in Entity entity);
     }
 
     internal class ComponentAnymapBase : IComponentAnymap
@@ -75,6 +80,67 @@ namespace ECS.Internal.Types
         }
 
         [NotNull] public IReadOnlyCollection<Type> Types => mapping.Keys.ToArray();
+
+        public bool ContainsComponent<T>(in Entity entity) where T : struct, IComponentData
+        {
+            return GetComponentList<T>().IsValidComponentOfEntity(entity);
+        }
+
+        public bool ContainsComponent<T>(in ComponentEcs<T> componentEcs) where T : struct, IComponentData
+        {
+            return ContainsComponent<T>(componentEcs.Entity);
+        }
+
+        public bool EntityHasAnyComponents(Entity entity, Type[] typeCollection)
+        {
+            foreach (var (type, container) in MappingEnumerator)
+            {
+                if (!typeCollection.Contains(type)) 
+                    continue;
+                
+                if (container.IsValidComponentOfEntity(entity))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public bool EntityHasExactComponents(in Entity entity, IReadOnlyCollection<Type> typeCollection)
+        {
+            foreach (var (type, container) in MappingEnumerator)
+            {
+                if (typeCollection.Contains(type))
+                {
+                    if (!container.IsValidComponentOfEntity(entity))
+                        return false;
+                }
+                else
+                { 
+                    if (container.IsValidComponentOfEntity(entity))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        [NotNull]
+        public IReadOnlyCollection<Type> GetTypesOfAllAttachedComponents(in Entity entity)
+        {
+            List<Type> types = new();
+            foreach (var (type, componentContainer) in MappingEnumerator)
+            {
+                if(componentContainer.IsValidComponentOfEntity(entity)) 
+                    types.Add(type);
+            }
+
+            return types;
+        }
+
+        public bool ContainsComponent(in Entity entity, Type type)
+        {
+            return GetComponentList(type).IsValidComponentOfEntity(entity);
+        }
     }
         
     internal class OwningComponentAnymap : ComponentAnymapBase
@@ -96,22 +162,6 @@ namespace ECS.Internal.Types
             componentContainer.RemoveFrom(entity);
         }
 
-      
-        public bool ContainsComponent<T>(in ComponentEcs<T> componentEcs) where T : struct, IComponentData
-        {
-            return ContainsComponent<T>(componentEcs.Entity);
-        }
-
-        public bool ContainsComponent<T>(in Entity entity) where T : struct, IComponentData
-        {
-            return GetComponentList<T>().IsValidComponentOfEntity(entity);
-        }
-
-        public bool ContainsComponent(in Entity entity, Type type)
-        {
-            return GetComponentList(type).IsValidComponentOfEntity(entity);
-        }
-        
 
         public void RemoveAllComponentsFrom(in Entity entity)
         {
@@ -123,20 +173,6 @@ namespace ECS.Internal.Types
 
 
         [NotNull]
-        public IReadOnlyCollection<Type> GetTypesOfAllAttachedComponents(in Entity entity)
-        {
-            List<Type> types = new();
-            foreach (var (type, componentContainer) in MappingEnumerator)
-            {
-                if(componentContainer.IsValidComponentOfEntity(entity)) 
-                    types.Add(type);
-            }
-
-            return types;
-        }
-
-
-        [NotNull]
         public IComponentAnymap GetNeededComponentArrays([NotNull] SystemOperatesOn operationTypes)
         {
             var exactly = operationTypes.Exactly;
@@ -144,40 +180,7 @@ namespace ECS.Internal.Types
 
             return CreateSubsetView(exactly.Concat(contains).Distinct().ToList());
         }
-
-
-        public bool EntityHasExactComponents(in Entity entity, IReadOnlyCollection<Type> typeCollection)
-        {
-            foreach (var (type, container) in MappingEnumerator)
-            {
-                if (typeCollection.Contains(type))
-                {
-                    if (!container.IsValidComponentOfEntity(entity))
-                        return false;
-                }
-                else
-                { 
-                    if (container.IsValidComponentOfEntity(entity))
-                        return false;
-                }
-            }
-
-            return true;
-        }
-
-        public bool EntityHasAnyComponents(Entity entity, Type[] typeCollection)
-        {
-            foreach (var (type, container) in MappingEnumerator)
-            {
-                if (!typeCollection.Contains(type)) 
-                    continue;
-                
-                if (container.IsValidComponentOfEntity(entity))
-                    return true;
-            }
-
-            return false;
-        }
+        
     }
 
     internal class ViewingComponentAnymap : ComponentAnymapBase

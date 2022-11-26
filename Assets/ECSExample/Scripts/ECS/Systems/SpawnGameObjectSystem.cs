@@ -1,12 +1,14 @@
 ﻿using ECS.Public.Attributes;
 using ECS.Public.Classes;
 using ECS.Public.Interfaces;
+using ECSExample.Scripts.ECS.Components;
 using ECSExample.Scripts.Static;
 using JetBrains.Annotations;
 using UnityEngine;
 
 namespace ECSExample.Scripts.ECS.Systems
 {
+    [UsedImplicitly]
     [SystemOperatesOn( Contains = new [] { typeof(GameobjectComponent), typeof(PositionComponent) })]
     public class SpawnGameObjectSystem : ISystemLogic
     {
@@ -31,39 +33,6 @@ namespace ECSExample.Scripts.ECS.Systems
             gameobjectComponent.GameObject = gameObject;
         }
     }
-    
-    
-    
-    [SystemOperatesOn( Contains = new [] { typeof(PositionComponent), typeof(VelocityComponent) })]
-    public class MoveGameObjectSystem : ISystemLogic
-    {
-        public GameObject RootGameObject { get; set; }
-        
-        public void Update(float deltaTime, ISystemEntityView entityView)
-        {
-            ref var position = ref entityView.GetComponent<PositionComponent>();
-            ref var velocity = ref entityView.GetComponent<VelocityComponent>();
 
-            var directionToRoot = Vector3.ClampMagnitude((RootGameObject.transform.position - position.Position), 1);
 
-            velocity.Velocity += directionToRoot * deltaTime;
-
-            position.Position += velocity.Velocity * deltaTime;
-        }
-    }
-    
-    [SystemOperatesOn( Contains = new [] { typeof(PositionComponent), typeof(GameobjectComponent) })]
-    public class ApplyGameObjectPosition : ISystemLogic
-    {
-        public void Update(float deltaTime, ISystemEntityView entityView)
-        {
-            ref var gameobjectComponent = ref entityView.GetComponent<GameobjectComponent>();
-            if(gameobjectComponent.GameObject == null)
-                return;
-
-            ref var position = ref entityView.GetComponent<PositionComponent>();
-
-            gameobjectComponent.GameObject.transform.position = position.Position;
-        }
-    }
 }

@@ -27,7 +27,7 @@ namespace ECS.Public.Classes
 
         private TypeList([NotNull] params Type[] safeTypeCollection)
         {
-            var typeBuilder = TypeList.CreateInternal();
+            var typeBuilder = CreateInternal();
             foreach (var type in safeTypeCollection) 
                 typeBuilder = typeBuilder.AddType(type);
 

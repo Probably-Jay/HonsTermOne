@@ -1,4 +1,5 @@
 ﻿using ECS.Public.Classes;
+using ECSExample.Scripts.ECS.Components;
 using ECSExample.Scripts.Static;
 
 namespace ECSExample.Scripts.ECS.TypeDefinitions

@@ -6,7 +6,13 @@ using Entity = ECS.Public.Classes.Entity;
 
 namespace ECS.Internal.Types
 {
-    internal class EntityList
+    internal interface IEntityList
+    {
+        bool Contains(Entity entityComponent);
+        ulong EntityCount(Entity.ActionFunc<bool> countDelegate);
+    }
+    
+    internal class EntityList : IEntityList
     {
         private readonly NonBoxingList<Entity> list;
         public EntityList(ulong? initialCapacity)
@@ -130,6 +136,7 @@ namespace ECS.Internal.Types
         }
 
 
-      
+        public bool Contains(Entity entity)
+            => ContainsEntity(entity);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using ECS.Internal.Types;
 using ECS.Public.Attributes;
 using ECS.Public.Classes;
 

@@ -6,12 +6,14 @@ using ECS.Public.Interfaces;
 
 namespace ECS.Internal.Extensions
 {
+
     public static class EntityUseExtensions
     {
         public static bool ExistsInWorld(this in Entity entity)
         {
             return !entity.IsNullEntity() && entity.OwningWorld.EntityExistsWithinWorld(entity);
         }
+        
         public static void AddComponent<T>(this in Entity entity) where T : struct, IComponentData
         {
             entity.OwningWorld.AddComponent<T>(entity);
@@ -33,7 +35,17 @@ namespace ECS.Internal.Extensions
         
         public static bool HasExactComponents(this in Entity entity, [JetBrains.Annotations.NotNull] TypeList types)
         {
-            return entity.OwningWorld.HasExactComponents(entity, types.Types);
+            return entity.HasExactComponents(types.Types);
+        }
+
+        internal static bool HasExactComponents(this in Entity entity, IReadOnlyCollection<Type> types)
+        {
+            return entity.OwningWorld.ComponentArraysView.EntityHasExactComponents(entity, types);
+        }
+
+        internal static bool HasAnyComponents(this Entity entity, Type[] types)
+        {
+            return entity.OwningWorld.ComponentArraysView.EntityHasAnyComponents(entity, types);
         }
 
         public static void RemoveComponent<T>(this in Entity entity) where T : struct, IComponentData
