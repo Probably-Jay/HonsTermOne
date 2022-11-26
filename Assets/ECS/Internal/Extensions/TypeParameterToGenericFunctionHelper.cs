@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using ECS.Internal.Exceptions;
+using JetBrains.Annotations;
 
 namespace ECS.Internal.Extensions
 {
@@ -24,7 +25,8 @@ namespace ECS.Internal.Extensions
         }
 
         
-        private static MethodInfo GetMethod(object callingObject, Type type, string function)
+        [NotNull]
+        private static MethodInfo GetMethod([NotNull] object callingObject, Type type, [NotNull] string function)
         {
             var method = callingObject.GetType()
                 .GetMethod(function, BindingFlags.Instance | BindingFlags.NonPublic)
@@ -32,7 +34,7 @@ namespace ECS.Internal.Extensions
             return method;
         }
 
-        private static object CallMethod(object callingObject, MethodBase method, params object[] parameters)
+        private static object CallMethod(object callingObject, [NotNull] MethodBase method, params object[] parameters)
         {
             return method!.Invoke(callingObject, parameters);
         }

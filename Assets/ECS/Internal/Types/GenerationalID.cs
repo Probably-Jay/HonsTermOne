@@ -1,6 +1,7 @@
 ﻿using System;
 using ECS.Internal.Exceptions;
 using ECS.Internal.Extensions;
+using JetBrains.Annotations;
 
 namespace ECS.Internal.Types
 {
@@ -72,6 +73,7 @@ namespace ECS.Internal.Types
             return new GenerationalID(generation: entityGenerationalID.Generation);
         }
         
+        [NotNull]
         public override string ToString()
         {
             return $"(ID: {ID.ToString()}, Gen: {Generation.ToString()})";

@@ -33,7 +33,7 @@ namespace ECS.Internal.Types
             list = new NonBoxingList<T>(initialCapacity);
         }
 
-        public Type ContainedType => typeof(T);
+        [NotNull] public Type ContainedType => typeof(T);
         
         public void ForeachComponent<TInner>([NotNull] ComponentEcs<TInner>.ActionRef<T> action) where TInner : struct, IComponentData
         {
@@ -76,6 +76,7 @@ namespace ECS.Internal.Types
             component.Destroy();
         }
 
+        [NotNull]
         public dynamic GetFromAsObject(in Entity entity)
         {
             return GetFrom(entity);
@@ -154,6 +155,7 @@ namespace ECS.Internal.Types
         public ref T this[ulong index] => ref data[index];
         
 
+        [NotNull]
         public Enumerator GetEnumerator() => new(this);
 
         public class Enumerator

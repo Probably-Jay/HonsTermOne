@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ECS.Internal.Exceptions;
 using ECS.Internal.Types;
-using ECS.Public.Classes;
 using ECS.Public.Interfaces;
 using JetBrains.Annotations;
 
@@ -16,13 +16,13 @@ namespace ECS.Public.Attributes
         bool HasNoRestrictions { get; }
     }
     
-    
+    [PublicAPI]
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class SystemOperatesOn : Attribute, ITypeRestriction
     {
-        public Type[] Exactly { get; set; } = new Type[] { };
-        public Type[] Contains{ get; set; } = new Type[] { };
-        public Type[] Without { get; set; } = new Type[] { };
+        public Type[] Exactly { get; set; } = { };
+        public Type[] Contains{ get; set; } = { };
+        public Type[] Without { get; set; } = { };
 
 
         public void AssertValid(string typeName)
@@ -38,7 +38,7 @@ namespace ECS.Public.Attributes
 
         public bool HasNoRestrictions => Exactly.Length == 0 && Contains.Length == 0 && Without.Length == 0;
 
-        private void Validate(IReadOnlyCollection<Type> types, string typeName)
+        private void Validate([NotNull] IReadOnlyCollection<Type> types, string typeName)
         {
             if (types.Count != types.Distinct().Count())
                 throw new SystemUpdateFunctionDefinesDuplicateTypesException(typeName);
@@ -68,34 +68,5 @@ namespace ECS.Public.Attributes
             if (Contains.Intersect(Without).Any())
                 throw new SystemUpdateFunctionDefinesNonsensicalQueryRelationship(typeName);
         }
-    }
-
-    internal class SystemUpdateFunctionDefinesNonComponentTypes : Exception
-    {
-        public SystemUpdateFunctionDefinesNonComponentTypes(string typeName) : base(
-            $"System {typeName} cannot operate on types not deriving from {typeof(IComponentData)}")
-        { }
-    }
-
-    internal class SystemUpdateFunctionDefinesDuplicateTypesException : Exception
-    {
-        public SystemUpdateFunctionDefinesDuplicateTypesException(string typeName) : base(
-            $"System {typeName} cannot define the same type to operate on multiple times")
-        { }
-    }
-    
-    internal class SystemUpdateFunctionDefinesNonsensicalQueryRelationship : Exception
-    {
-        public SystemUpdateFunctionDefinesNonsensicalQueryRelationship(string typeName) : base($"System {typeName} " +
-            $"update function defines redundant {nameof(SystemOperatesOn.Exactly)} " +
-            $"and \"{nameof(SystemOperatesOn.Contains)}\" or mutually exclusive \"{nameof(SystemOperatesOn.Contains)}\" and \"{nameof(SystemOperatesOn.Without)}\"")
-        { }
-    }
-    
-    internal class SystemUpdateFunctionDefinesIncompleteQueryRelationship : Exception
-    {
-        public SystemUpdateFunctionDefinesIncompleteQueryRelationship(string typeName) : base($"System {typeName} " +
-            $"update function defines {nameof(SystemOperatesOn.Without)} but does not define {nameof(SystemOperatesOn.Contains)}")
-        { }
     }
 }

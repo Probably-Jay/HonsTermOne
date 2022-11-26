@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using ECS.Public.Attributes;
 using ECS.Public.Classes;
+using JetBrains.Annotations;
 
 namespace ECS.Internal.Types
 {
     internal static class ComponentMapFactory
     {
-        public static IReadOnlyDictionary<Type, IAnyComponentContainer> CreateComponentMapping(IEnumerable<TypeInfo> componentTypes)
+        [NotNull]
+        public static IReadOnlyDictionary<Type, IAnyComponentContainer> CreateComponentMapping([NotNull] IEnumerable<TypeInfo> componentTypes)
         {
             var componentAnymap = new Dictionary<Type, IAnyComponentContainer>();
 

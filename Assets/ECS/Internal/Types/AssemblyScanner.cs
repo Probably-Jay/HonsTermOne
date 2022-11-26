@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace ECS.Internal.Types
 {
@@ -17,12 +18,13 @@ namespace ECS.Internal.Types
             return Scan<TScanForType>(typeof(TFromAssemblyContainingMarker).Assembly);
         }
 
-        internal static IEnumerable<TypeInfo> ScanForFromAssembliesContaining<TScanForType>(params Type[] assemblyMarkers)
+        internal static IEnumerable<TypeInfo> ScanForFromAssembliesContaining<TScanForType>([NotNull] params Type[] assemblyMarkers)
         {
             return Scan<TScanForType>(assemblyMarkers.Select(m => m.Assembly).ToArray());
         }
 
-        private static IEnumerable<TypeInfo> Scan<TScanForType>(params Assembly[] assemblies)
+        [CanBeNull]
+        private static IEnumerable<TypeInfo> Scan<TScanForType>([NotNull] params Assembly[] assemblies)
         {
             IEnumerable<TypeInfo> componentTypes = null;
             foreach (var assembly in assemblies)

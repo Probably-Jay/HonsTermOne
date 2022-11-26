@@ -17,7 +17,7 @@ namespace ECS.Internal.Extensions
             entity.OwningWorld.AddComponent<T>(entity);
         }
 
-        public static void AddComponents(this in Entity entity, TypeList types)
+        public static void AddComponents(this in Entity entity, [JetBrains.Annotations.NotNull] TypeList types)
         {
             entity.OwningWorld.AddComponents(entity, types);
         }
@@ -31,7 +31,7 @@ namespace ECS.Internal.Extensions
             return entity.OwningWorld.EntityHasComponent<T>(entity);
         }
         
-        public static bool HasExactComponents(this in Entity entity, TypeList types)
+        public static bool HasExactComponents(this in Entity entity, [JetBrains.Annotations.NotNull] TypeList types)
         {
             return entity.OwningWorld.HasExactComponents(entity, types.Types);
         }
@@ -51,13 +51,13 @@ namespace ECS.Internal.Extensions
             return ref entity.OwningWorld.GetComponent<T>(entity);
         }
 
-        public static void ModifyComponentData<T> (this in Entity entity, [NotNull] ComponentEcs<T>.ActionRef<T> componentDelegate) where T : struct, IComponentData
+        public static void ModifyComponentData<T> (this in Entity entity, [NotNull] [JetBrains.Annotations.NotNull] ComponentEcs<T>.ActionRef<T> componentDelegate) where T : struct, IComponentData
         {
             ref var component = ref entity.OwningWorld.GetComponent<T>(entity);
             componentDelegate(ref component.ComponentData);
         }
 
-        public static TRet QueryComponent<TRet,T> (this in Entity entity, [NotNull] ComponentEcs<T>.FunctionRef<TRet,ComponentEcs<T>> componentDelegate) where T : struct, IComponentData
+        public static TRet QueryComponent<TRet,T> (this in Entity entity, [NotNull] [JetBrains.Annotations.NotNull] ComponentEcs<T>.FunctionRef<TRet,ComponentEcs<T>> componentDelegate) where T : struct, IComponentData
         {
             ref var component = ref entity.OwningWorld.GetComponent<T>(entity);
             return componentDelegate(ref component);

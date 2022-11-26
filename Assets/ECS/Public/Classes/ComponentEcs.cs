@@ -1,6 +1,7 @@
 ﻿using System;
 using ECS.Internal.Interfaces;
 using ECS.Public.Interfaces;
+using JetBrains.Annotations;
 
 namespace ECS.Public.Classes
 {
@@ -23,14 +24,14 @@ namespace ECS.Public.Classes
 
         public T ComponentData;
 
-        public Type DataType => typeof(T);
+        [NotNull] public Type DataType => typeof(T);
 
         private Entity entity;
         public readonly Entity Entity => entity;
 
-        public ulong EntityIDIndex => Entity.EntityIDIndex;
+        public readonly ulong EntityIDIndex => Entity.EntityIDIndex;
 
-        public override string ToString()
+        [NotNull] public override string ToString()
         {
             return $"Entity component {Entity.ToString()} component: {ComponentData.ToString()}";
         }
@@ -40,6 +41,6 @@ namespace ECS.Public.Classes
         public override bool Equals(object obj) => obj is ComponentEcs<T> other && Equals(other);
         public static bool operator==(ComponentEcs<T> lhs, ComponentEcs<T> rhs) => lhs.Equals(rhs);
         public static bool operator!=(ComponentEcs<T> lhs, ComponentEcs<T> rhs) => !(lhs == rhs);
-        public override int GetHashCode() => HashCode.Combine(entity, ComponentData);
+        public readonly override int GetHashCode() => HashCode.Combine(entity, ComponentData);
     }
 }

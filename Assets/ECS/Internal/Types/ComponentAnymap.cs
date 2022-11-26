@@ -5,6 +5,7 @@ using ECS.Internal.Exceptions;
 using ECS.Public.Attributes;
 using ECS.Public.Classes;
 using ECS.Public.Interfaces;
+using JetBrains.Annotations;
 using Entity = ECS.Public.Classes.Entity;
 
 namespace ECS.Internal.Types
@@ -64,6 +65,7 @@ namespace ECS.Internal.Types
             }
         }
 
+        [NotNull]
         protected IComponentAnymap CreateSubsetView(IReadOnlyList<Type> typeSubset)
         {
             var mappingSubset = mapping
@@ -72,13 +74,13 @@ namespace ECS.Internal.Types
             return new ViewingComponentAnymap(mappingSubset);
         }
 
-        public IReadOnlyCollection<Type> Types => mapping.Keys.ToArray();
+        [NotNull] public IReadOnlyCollection<Type> Types => mapping.Keys.ToArray();
     }
         
     internal class OwningComponentAnymap : ComponentAnymapBase
     {
         
-        public void RegisterTypes(TypeRegistry typeRegistry)
+        public void RegisterTypes([NotNull] TypeRegistry typeRegistry)
         {
             SetMapping(ComponentMapFactory.CreateComponentMapping(typeRegistry.ComponentTypes));
         }
@@ -120,6 +122,7 @@ namespace ECS.Internal.Types
         }
 
 
+        [NotNull]
         public IReadOnlyCollection<Type> GetTypesOfAllAttachedComponents(in Entity entity)
         {
             List<Type> types = new();
@@ -133,7 +136,8 @@ namespace ECS.Internal.Types
         }
 
 
-        public IComponentAnymap GetNeededComponentArrays(SystemOperatesOn operationTypes)
+        [NotNull]
+        public IComponentAnymap GetNeededComponentArrays([NotNull] SystemOperatesOn operationTypes)
         {
             var exactly = operationTypes.Exactly;
             var contains = operationTypes.Contains;

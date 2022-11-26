@@ -10,8 +10,8 @@ namespace ECS.Public.Classes
         Entity Entity { get; }
         ref T GetComponent<T>() where T : struct, IComponentData; 
     }
-    
-    public readonly struct SystemEntityViewView : ISystemEntityView
+
+    internal readonly struct SystemEntityViewView : ISystemEntityView
     {
         public Entity Entity { get; }
         private readonly IComponentAnymap componentAnymapReference;

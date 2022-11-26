@@ -73,6 +73,7 @@ namespace ECS.Public.Classes
             => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntityWithComponents(types));
 
 
+        [JetBrains.Annotations.NotNull]
         private ICollection<Entity> CreateEntitiesWithFunction(ulong numberOfEntitiesToCreate, Func<Entity> entityCreationFunction)
         {
             List<Entity> entities = new();
@@ -108,7 +109,7 @@ namespace ECS.Public.Classes
             addComponent.AssertIsNotNull();
         }
 
-        internal void AddComponents(Entity entity, TypeList types)
+        internal void AddComponents(Entity entity, [JetBrains.Annotations.NotNull] TypeList types)
         {
             foreach (var type in types.Types)
             {
@@ -144,7 +145,7 @@ namespace ECS.Public.Classes
             return EntityExistsWithinWorld(entity) && ComponentArrays.ContainsComponent<T>(entity);
         }
 
-        private bool MatchesTypeRestriction(Entity entity, ITypeRestriction typeRestrictions)
+        private bool MatchesTypeRestriction(Entity entity, [JetBrains.Annotations.NotNull] ITypeRestriction typeRestrictions)
         {
             if (typeRestrictions.HasNoRestrictions)
                 return true;
@@ -229,7 +230,7 @@ namespace ECS.Public.Classes
             SystemTypes = AssemblyScanner.ScanForFromAssemblyContaining<ISystemLogic,TMarker>().ToList();
             OnUpdatedTypeRegistry?.Invoke();
         } 
-        public void RegisterTypesFromAssembliesContaining(Type assemblyMarker, params Type[] otherAssemblyMarkers)
+        public void RegisterTypesFromAssembliesContaining(Type assemblyMarker, [JetBrains.Annotations.NotNull] params Type[] otherAssemblyMarkers)
         {
             var assemblyMarkers = new [] { assemblyMarker }.Concat(otherAssemblyMarkers).ToArray();
             ComponentTypes = AssemblyScanner.ScanForFromAssembliesContaining<IComponentData>(assemblyMarkers).ToList();

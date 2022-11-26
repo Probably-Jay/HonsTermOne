@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using ECS.Internal.Exceptions;
+using ECS.Internal.Interfaces;
 using ECS.Public.Classes;
 using ECS.Public.Interfaces;
 
@@ -10,18 +11,18 @@ namespace ECS.Internal.Types
     internal class SystemList
     {
         private IReadOnlyDictionary<Type, IAnySystem> systemMap;
-        public void RegisterTypes(TypeRegistry typeRegistry, OwningComponentAnymap componentArrays)
+        public void RegisterTypes([JetBrains.Annotations.NotNull] TypeRegistry typeRegistry, OwningComponentAnymap componentArrays)
         {
             systemMap = SystemMapFactory.CreateSystemMap(typeRegistry.SystemTypes, componentArrays);
         }
 
-        public void ModifySystem<T>([NotNull] Action<T> action) where T : class, ISystemLogic
+        public void ModifySystem<T>([NotNull] [JetBrains.Annotations.NotNull] Action<T> action) where T : class, ISystemLogic
         {
             var system = GetSystem<T>();
             system.ModifySystem(action);
         }
 
-        public TRet QuerySystem<T, TRet>(Func<T, TRet> action) where T : class, ISystemLogic
+        public TRet QuerySystem<T, TRet>([JetBrains.Annotations.NotNull] Func<T, TRet> action) where T : class, ISystemLogic
         {
             var system = GetSystem<T>();
             return system.QuerySystem(action);

@@ -1,7 +1,9 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace ECS.Public.Attributes
 {
+    [PublicAPI]
     [AttributeUsage(AttributeTargets.Struct )]
     public class ReserveInComponentArray : Attribute
     {
