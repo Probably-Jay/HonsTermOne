@@ -75,13 +75,7 @@ namespace ECS.Internal.Types
             ref var component = ref list[entity.EntityIDIndex];
             component.Destroy();
         }
-
-        [NotNull]
-        public dynamic GetFromAsObject(in Entity entity)
-        {
-            return GetFrom(entity);
-        }
-
+        
 
         public bool IsValidComponentOfEntity(in Entity newComponentEntityID)
         {
@@ -179,5 +173,7 @@ namespace ECS.Internal.Types
             { }
         }
 
+        public Span<T> AsSpan()
+            => data.AsSpan();
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using ECS.Internal.Extensions;
 using ECS.Public;
 using ECS.Public.Classes;
+using ECS.Public.Extensions;
 using NUnit.Framework;
 using UnityEngine;
 using Entity = ECS.Public.Classes.Entity;

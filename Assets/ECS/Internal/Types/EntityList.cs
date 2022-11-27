@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using ECS.Internal.Extensions;
 using ECS.Public.Classes;
 using JetBrains.Annotations;
+using System.Runtime.CompilerServices;
+using Unity.Collections.LowLevel.Unsafe;
 using Entity = ECS.Public.Classes.Entity;
 
 namespace ECS.Internal.Types
@@ -38,7 +41,6 @@ namespace ECS.Internal.Types
                 action(entity);
             }
         }
-        
         
         public ulong EntityCount([CanBeNull] Entity.ActionFunc<bool> countDelegate)
         {
