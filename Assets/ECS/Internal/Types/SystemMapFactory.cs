@@ -28,7 +28,6 @@ namespace ECS.Internal.Types
                 catch (Exception e)
                 {
                     Debug.LogError(e);
-                    continue;
                 }
             }
 

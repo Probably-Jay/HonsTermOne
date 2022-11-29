@@ -3,6 +3,7 @@ using ECS.Internal.Extensions;
 using ECS.Public.Classes;
 using JetBrains.Annotations;
 using ECS.Public.Delegates;
+using ECS.Public.Extensions;
 using Entity = ECS.Public.Classes.Entity;
 
 namespace ECS.Internal.Types

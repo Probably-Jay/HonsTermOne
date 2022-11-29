@@ -7,16 +7,16 @@ namespace ECS.Internal.Types
 {
     internal readonly struct GenerationalID : IEquatable<GenerationalID>, IComparable<GenerationalID>
     {
-        public GenerationalID(ulong id, ulong generation)
+        private GenerationalID(ulong id, ulong generation)
         {
             if(id == 0)
                 throw new NullIDCannotBeUsedException();
 
             ID = id;
             Generation = generation;
-        }      
-        
-        public GenerationalID(ulong generation)
+        }
+
+        private GenerationalID(ulong generation)
         {
             ID = 0;
             Generation = generation;

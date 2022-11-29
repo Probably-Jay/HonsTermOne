@@ -5,6 +5,7 @@ using ECS.Internal.Helper;
 using ECS.Internal.Interfaces;
 using ECS.Public.Classes;
 using ECS.Public.Delegates;
+using ECS.Public.Extensions;
 using ECS.Public.Interfaces;
 using JetBrains.Annotations;
 using Entity = ECS.Public.Classes.Entity;
@@ -60,6 +61,7 @@ namespace ECS.Internal.Types
             return ref list[entity.EntityIDIndex];
         }
 
+        // todo add unsafe version of this
         public ref T GetFrom(Entity entity)
         {
             if (!IsValidComponentOfEntity(entity)) 

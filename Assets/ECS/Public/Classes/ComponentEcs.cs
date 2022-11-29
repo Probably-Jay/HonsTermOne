@@ -9,7 +9,7 @@ namespace ECS.Public.Classes
     /// Struct that wraps user-defined components. Contains the user-defined struct inline as well as the EntityID that the component is attached to
     /// </summary>
     /// <typeparam name="T">The user-defined component that this wrapper class contains</typeparam>
-    public struct ComponentEcs<T> : IComponent, IEquatable<ComponentEcs<T>> where T : struct, IComponentData
+    internal struct ComponentEcs<T> : IComponent, IEquatable<ComponentEcs<T>> where T : struct, IComponentData
     {
         internal ComponentEcs(T componentDataEcs, Entity entity)
         {

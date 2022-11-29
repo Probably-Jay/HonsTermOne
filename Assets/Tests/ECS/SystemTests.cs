@@ -6,6 +6,7 @@ using ECS.Internal.Interfaces;
 using ECS.Public;
 using ECS.Public.Attributes;
 using ECS.Public.Classes;
+using ECS.Public.Extensions;
 using ECS.Public.Interfaces;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;
@@ -155,11 +156,11 @@ namespace Tests.ECS
             var entity = world.CreateEntitiesWithComponents(10, new MyType()).ToList();
             world.Tick(1/50f);
 
-            Assert.AreEqual(1, entity[0].ReadComponent<OtherTestComponent>().ComponentData.Data);
+            Assert.AreEqual(1, entity[0].ReadComponent<OtherTestComponent>().Data);
             
             world.Tick(1/50f);
             
-            Assert.AreEqual(2, entity[0].ReadComponent<OtherTestComponent>().ComponentData.Data);
+            Assert.AreEqual(2, entity[0].ReadComponent<OtherTestComponent>().Data);
         } 
         
         [Test]
@@ -168,11 +169,11 @@ namespace Tests.ECS
             var entity = world.CreateEntitiesWithComponent<OtherTestComponent>(10).ToList();
             world.Tick(1/50f);
 
-            Assert.AreEqual(0, entity[0].ReadComponent<OtherTestComponent>().ComponentData.Data);
+            Assert.AreEqual(0, entity[0].ReadComponent<OtherTestComponent>().Data);
             
             world.Tick(1/50f);
             
-            Assert.AreEqual(0, entity[0].ReadComponent<OtherTestComponent>().ComponentData.Data);
+            Assert.AreEqual(0, entity[0].ReadComponent<OtherTestComponent>().Data);
         }
 
         [Test]
@@ -183,7 +184,7 @@ namespace Tests.ECS
                 var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
-                Assert.AreEqual(1, entity[0].ReadComponent<AComponent>().ComponentData.Data);
+                Assert.AreEqual(1, entity[0].ReadComponent<AComponent>().Data);
             }
             world.DestroyAllEntities();
             {
@@ -191,7 +192,7 @@ namespace Tests.ECS
                 var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
-                Assert.AreEqual(1, entity[0].ReadComponent<AComponent>().ComponentData.Data);
+                Assert.AreEqual(1, entity[0].ReadComponent<AComponent>().Data);
             }
         }
 
@@ -203,8 +204,8 @@ namespace Tests.ECS
                 var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
-                Assert.AreEqual(1, entity[0].ReadComponent<BComponent>().ComponentData.Data);
-                Assert.AreEqual(1, entity[0].ReadComponent<CComponent>().ComponentData.Data);
+                Assert.AreEqual(1, entity[0].ReadComponent<BComponent>().Data);
+                Assert.AreEqual(1, entity[0].ReadComponent<CComponent>().Data);
             }
             world.DestroyAllEntities();
             {
@@ -212,8 +213,8 @@ namespace Tests.ECS
                 var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
-                Assert.AreEqual(1, entity[0].ReadComponent<BComponent>().ComponentData.Data);
-                Assert.AreEqual(1, entity[0].ReadComponent<CComponent>().ComponentData.Data);
+                Assert.AreEqual(1, entity[0].ReadComponent<BComponent>().Data);
+                Assert.AreEqual(1, entity[0].ReadComponent<CComponent>().Data);
             }
         }
 
@@ -225,7 +226,7 @@ namespace Tests.ECS
                 var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
-                Assert.AreEqual(1, entity[0].ReadComponent<DComponent>().ComponentData.Data);
+                Assert.AreEqual(1, entity[0].ReadComponent<DComponent>().Data);
             }
             world.DestroyAllEntities();
             {
@@ -233,7 +234,7 @@ namespace Tests.ECS
                 var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
-                Assert.AreEqual(1, entity[0].ReadComponent<DComponent>().ComponentData.Data);
+                Assert.AreEqual(1, entity[0].ReadComponent<DComponent>().Data);
             }
         } 
         
@@ -245,7 +246,7 @@ namespace Tests.ECS
                 var entity = world.CreateEntitiesWithComponents(10, type).ToList();
                 world.Tick(1 / 50f);
 
-                Assert.AreEqual(0, entity[0].ReadComponent<DComponent>().ComponentData.Data);
+                Assert.AreEqual(0, entity[0].ReadComponent<DComponent>().Data);
             }
             world.DestroyAllEntities();
             {
@@ -255,7 +256,7 @@ namespace Tests.ECS
 
                 try
                 {
-                    _ = entity[0].ReadComponent<DComponent>().ComponentData.Data;
+                    _ = entity[0].ReadComponent<DComponent>().Data;
                     Assert.Fail();
                 }
                 catch (Exception)

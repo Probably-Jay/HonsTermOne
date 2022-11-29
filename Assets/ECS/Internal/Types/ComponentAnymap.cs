@@ -11,7 +11,7 @@ using Entity = ECS.Public.Classes.Entity;
 namespace ECS.Internal.Types
 {
 
-    interface IComponentAnymap
+    internal interface IComponentAnymap
     {
         IReadOnlyCollection<Type> Types { get; }
        // ref Component<T> Get<T>(Entity entity) where T : struct, IComponentData;

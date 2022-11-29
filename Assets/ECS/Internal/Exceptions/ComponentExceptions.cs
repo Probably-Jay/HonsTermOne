@@ -4,8 +4,8 @@ using ECS.Public.Classes;
 
 namespace ECS.Internal.Exceptions
 {
- 
-    public class CannotAddDuplicateComponentException : Exception
+
+    internal class CannotAddDuplicateComponentException : Exception
     {
         public CannotAddDuplicateComponentException(Type t) : base($"Entity already has component {t} attached")
         { }

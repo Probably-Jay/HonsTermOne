@@ -7,7 +7,7 @@ namespace ECS.Internal.Extensions
 {
     internal static class TypeParameterToGenericFunctionHelper
     {
-        public static object CallGenericFunctionFromType(this object callingObject, Type type, string function, params object[] parameters)
+        public static object CallGenericFunctionFromType([NotNull] this object callingObject, Type type, [NotNull] string function, params object[] parameters)
         {
             try
             {

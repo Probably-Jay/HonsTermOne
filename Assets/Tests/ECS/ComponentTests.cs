@@ -5,6 +5,7 @@ using ECS.Internal.Extensions;
 using ECS.Internal.Interfaces;
 using ECS.Public;
 using ECS.Public.Classes;
+using ECS.Public.Extensions;
 using ECS.Public.Interfaces;
 using NUnit.Framework;
 using Entity = ECS.Public.Classes.Entity;
@@ -148,7 +149,7 @@ namespace Tests.ECS
         {
             entity.AddComponent<TestComponentValData>();
             
-            var initialVal = entity.ReadComponent<TestComponentValData>().ComponentData.Data;
+            var initialVal = entity.ReadComponent<TestComponentValData>().Data;
             
             Assert.AreEqual(initialVal, 0);
 
@@ -157,7 +158,7 @@ namespace Tests.ECS
                 data.Data++;
             });
             
-            var newValue = entity.ReadComponent<TestComponentValData>().ComponentData.Data;
+            var newValue = entity.ReadComponent<TestComponentValData>().Data;
             
             Assert.AreEqual(newValue, 1);
         }
@@ -179,19 +180,25 @@ namespace Tests.ECS
         {
             entity.AddComponent<TestComponentValData>();
 
-            Assert.True(entity.QueryComponent(
-                (ref ComponentEcs<TestComponentValData> component) =>
-                    component.ExistsAttachedToEntity())
-            );
+            Assert.DoesNotThrow(
+                () => entity.ModifyComponentData(
+                    (ref TestComponentValData component) => { })
+                );
             
             entity.RemoveComponent<TestComponentValData>();
-            
-            Assert.Throws<EntityDoesNotContainComponentException>(
-                    () => _ = entity.QueryComponent(
-                        (ref ComponentEcs<TestComponentValData> component) =>
-                            component.ExistsAttachedToEntity()
-                            )
-                    );
+
+            try
+            {
+                entity.ModifyComponentData(
+                    (ref TestComponentValData component) => { });
+                Assert.Fail();
+            }
+            catch 
+            {
+                //
+            }
+           
+
         } 
         
 
@@ -205,12 +212,12 @@ namespace Tests.ECS
                     component.Data = 1;
                 });
             
-            Assert.AreEqual(entity.ReadComponent<TestComponentValData>().ComponentData.Data, 1);
+            Assert.AreEqual(entity.ReadComponent<TestComponentValData>().Data, 1);
             
             entity.RemoveComponent<TestComponentValData>();
             entity.AddComponent<TestComponentValData>();
             
-            Assert.AreEqual(entity.ReadComponent<TestComponentValData>().ComponentData.Data, 0);
+            Assert.AreEqual(entity.ReadComponent<TestComponentValData>().Data, 0);
         }
 
         [Test]
@@ -220,13 +227,13 @@ namespace Tests.ECS
 
             var component = entity.ReadComponent<TestComponentValData>();
 
-            component.ComponentData.Data = 1;
+            component.Data = 1;
             
-            Assert.AreEqual(entity.ReadComponent<TestComponentValData>().ComponentData.Data, 0);
+            Assert.AreEqual(entity.ReadComponent<TestComponentValData>().Data, 0);
 
             entity.WriteComponent(component);
             
-            Assert.AreEqual(entity.ReadComponent<TestComponentValData>().ComponentData.Data, 1);
+            Assert.AreEqual(entity.ReadComponent<TestComponentValData>().Data, 1);
         }
     }
 }

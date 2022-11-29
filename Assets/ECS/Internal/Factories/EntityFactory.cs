@@ -3,6 +3,7 @@ using ECS.Internal.Exceptions;
 using ECS.Internal.Extensions;
 using ECS.Internal.Types;
 using ECS.Public.Classes;
+using ECS.Public.Extensions;
 using JetBrains.Annotations;
 
 namespace ECS.Internal.Factories

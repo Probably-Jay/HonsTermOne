@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ECS.Internal.Extensions;
 using ECS.Internal.Types;
 using ECS.Public.Attributes;
+using ECS.Public.Extensions;
 using ECS.Public.Interfaces;
 using JetBrains.Annotations;
 
@@ -182,6 +183,10 @@ namespace ECS.Public.Classes
             => ComponentArrays.RemoveComponentFrom<T>(entity);
         
 
+        /// <summary>
+        /// Perform <see cref="ISystemLogic"/>.<see cref="ISystemLogic.Update"/> on all entities
+        /// </summary>
+        /// <param name="deltaTime">Time difference since last <see cref="Tick"/> was called</param>
         public void Tick(float deltaTime)
         {
             EntityArray.ForeachExtantEntity(entity => 
@@ -197,10 +202,21 @@ namespace ECS.Public.Classes
             });
         }
         
-        
+        /// <summary>
+        /// Modify a system through a delegate
+        /// </summary>
+        /// <param name="action">Action to apply to a system</param>
+        /// <typeparam name="T">The <see cref="ISystemLogic"/> to be modified</typeparam>
         public void ModifySystem<T>([NotNull] Action<T> action) where T : class, ISystemLogic 
             => SystemList.ModifySystem(action);
         
+        /// <summary>
+        /// Query a system through a delegate
+        /// </summary>
+        /// <param name="action">The function to apply to a system</param>
+        /// <typeparam name="T">The <see cref="ISystemLogic"/> to be queried</typeparam>
+        /// <typeparam name="TRet">The return type of the query. If <c>void</c> then use <see cref="World.ModifySystem{T}"/></typeparam>
+        /// <returns>The result of the query</returns>
         public TRet QuerySystem<T, TRet>([NotNull] Func<T, TRet> action) where T : class, ISystemLogic 
             => SystemList.QuerySystem(action);
     }

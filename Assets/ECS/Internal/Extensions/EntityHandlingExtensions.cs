@@ -1,23 +1,24 @@
-﻿using ECS.Internal.Exceptions;
+﻿using System;
+using System.Collections.Generic;
+using ECS.Internal.Exceptions;
 using ECS.Internal.Interfaces;
 using ECS.Internal.Types;
 using ECS.Public.Attributes;
 using ECS.Public.Classes;
+using ECS.Public.Extensions;
 using ECS.Public.Interfaces;
 using JetBrains.Annotations;
 using Entity = ECS.Public.Classes.Entity;
 
 namespace ECS.Internal.Extensions
 {
-    public static class EntityHandlingExtensions
+    internal static class EntityHandlingExtensions
     {
-        public static bool IsNullEntity(this Entity entity) => entity.Equals(Entity.Factory.NullEntity);
         internal static void AssertIsNotNull(this Entity entity)
         {
             if (entity.IsNullEntity())
                 throw new EntityNullException();
         }
-        public static bool IsNullComponent<T>(this ComponentEcs<T> componentEcs) where T :struct, IComponentData => componentEcs.Entity.Equals(Entity.Factory.NullEntity);
         internal static void AssertIsNotNull<T>(this ComponentEcs<T> componentEcs) where T : struct, IComponentData
         {
             if (componentEcs.IsNullComponent())
@@ -31,7 +32,7 @@ namespace ECS.Internal.Extensions
             return thisEntity.GenerationalID.IsSupersededBy(other.GenerationalID);
         }
 
-        internal static bool IsSupersededBy(this GenerationalID thisId, GenerationalID other)
+        private static bool IsSupersededBy(this GenerationalID thisId, GenerationalID other)
         {
             if (thisId.ID != other.ID)
                 throw new EntityIDMismatchException();
@@ -50,6 +51,21 @@ namespace ECS.Internal.Extensions
                 return false;
 
             return !entity.HasAnyComponents(typeRestrictions.Without);
+        }
+        
+        internal static bool HasExactComponents(this in Entity entity, IReadOnlyCollection<Type> types)
+        {
+            return entity.OwningWorld.ComponentArraysView.EntityHasExactComponents(entity, types);
+        }
+
+        private static bool HasAnyComponents(this Entity entity, Type[] types)
+        {
+            return entity.OwningWorld.ComponentArraysView.EntityHasAnyComponents(entity, types);
+        }
+        
+        internal static ref ComponentEcs<T> GetComponent<T>(this in Entity entity) where T : struct, IComponentData
+        {
+            return ref entity.OwningWorld.GetComponent<T>(entity);
         }
 
     }
