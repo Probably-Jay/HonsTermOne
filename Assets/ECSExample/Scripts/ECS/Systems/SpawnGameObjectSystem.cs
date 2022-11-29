@@ -22,8 +22,8 @@ namespace ECSExample.Scripts.ECS.Systems
             
             ref var positionComponent = ref entityView.GetComponent<PositionComponent>();
 
-            var r = new System.Random((int)entityView.Entity.EntityIDIndex);
-
+            var r = new System.Random((int)entityView.Entity.GetHashCode());
+            
             var position = new Vector3(r.Next(-10, 10), r.Next(-10, 10), r.Next(-10, 10));
             positionComponent.Position = position;
 

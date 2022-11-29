@@ -1,4 +1,5 @@
 ﻿using ECS.Public.Classes;
+using ECS.Public.Delegates;
 using JetBrains.Annotations;
 
 namespace ECS.Public.Extensions
@@ -10,7 +11,7 @@ namespace ECS.Public.Extensions
             return world.EntityArrayView.EntityCount(null);
         }
 
-        public static ulong EntityCount(this World world, [NotNull] Entity.ActionFunc<bool> countDelegate)
+        public static ulong EntityCount(this World world, [NotNull] EntityActionFunc<bool> countDelegate)
         {
             return world.EntityArrayView.EntityCount(countDelegate);
         }

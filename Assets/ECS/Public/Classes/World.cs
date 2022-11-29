@@ -8,8 +8,14 @@ using JetBrains.Annotations;
 
 namespace ECS.Public.Classes
 {
+    /// <summary>
+    /// Contains all entities and controls the systems which operate on them 
+    /// </summary>
     public class World
     {
+        /// <summary>
+        /// <inheritdoc cref="TypeRegistry"/>
+        /// </summary>
         public static TypeRegistry TypeRegistry { get; } = new();
         
         private EntityList EntityArray { get; }
@@ -38,11 +44,20 @@ namespace ECS.Public.Classes
             SystemList.RegisterTypes(TypeRegistry, ComponentArrays);
         }
 
+        /// <summary>
+        /// Create a new empty entity
+        /// </summary>
+        /// <returns>The created entity</returns>
         public Entity CreateEntity()
         {
             return EntityArray.CreateEntity(this);
         }
         
+        /// <summary>
+        /// Create a new entity with a component attached
+        /// </summary>
+        /// <typeparam name="T">The type of the component to attach</typeparam>
+        /// <returns>The created entity</returns>
         public Entity CreateEntityWithComponent<T>() where T : struct, IComponentData
         {
             var entity = CreateEntity();
@@ -50,27 +65,60 @@ namespace ECS.Public.Classes
             return entity;
         }    
         
+        /// <summary>
+        /// Create a new entity with components attached
+        /// </summary>
+        /// <typeparam name="T">The <see cref="TypeList"/> of the components to attach</typeparam>
+        /// <returns>The created entity</returns>
         public Entity CreateEntityWithComponents<T>() where T : TypeList, new()
         {
             return CreateEntityWithComponents(new T());
         }   
         
-        public Entity CreateEntityWithComponents(TypeList types)
+        /// <summary>
+        /// Create a new entity with components attached
+        /// </summary>
+        /// <param name="types">The <see cref="TypeList"/> of the components to attach</param>
+        /// <returns>The created entity</returns>
+        public Entity CreateEntityWithComponents([NotNull] TypeList types)
         {
             var entity = CreateEntity();
             AddComponents(entity, types);
             return entity;
         }
 
+        /// <summary>
+        /// Create new empty entities
+        /// </summary>
+        /// <param name="numberOfEntitiesToCreate">The number of entities that should be created</param>
+        /// <returns>The created entities</returns>
         public ICollection<Entity> CreateEntities(ulong numberOfEntitiesToCreate) 
             => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntity());
         
+        /// <summary>
+        /// Create new entities with a component attached
+        /// </summary>
+        /// <param name="numberOfEntitiesToCreate">The number of entities that should be created</param>
+        /// <typeparam name="T">The type of the component to attach</typeparam>
+        /// <returns>The created entities</returns>
         public ICollection<Entity> CreateEntitiesWithComponent<T>(ulong numberOfEntitiesToCreate) where T : struct, IComponentData
             => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntityWithComponent<T>()); 
         
+        /// <summary>
+        /// Create new entities with a component attached
+        /// </summary>
+        /// <param name="numberOfEntitiesToCreate">The number of entities that should be created</param>
+        /// <typeparam name="T">The <see cref="TypeList"/> of the components to attach</typeparam>
+        /// <returns>The created entities</returns>
         public ICollection<Entity> CreateEntitiesWithComponents<T>(ulong numberOfEntitiesToCreate) where T : TypeList, new()
             => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntityWithComponents(new T())); 
         
+        /// <summary>
+        /// Create new entities with a component attached
+        /// </summary>
+        /// <param name="numberOfEntitiesToCreate">The number of entities that should be created</param>
+        /// <param name="types">The <see cref="TypeList"/> of the components to attach</param>
+        /// <returns>The created entities</returns>
         public ICollection<Entity> CreateEntitiesWithComponents(ulong numberOfEntitiesToCreate, TypeList types) 
             => CreateEntitiesWithFunction(numberOfEntitiesToCreate, () => CreateEntityWithComponents(types));
 
@@ -85,8 +133,16 @@ namespace ECS.Public.Classes
             }
 
             return entities;
-        }   
+        }
+
         
+        /// <summary>
+        /// Destroy all entities in this world
+        /// </summary>
+        public void DestroyAllEntities()
+        {
+            EntityArray.ForeachExtantEntity((ref Entity entity) => DestroyEntity(ref entity));
+        }
 
         internal void DestroyEntity(ref Entity entity)
         {
@@ -94,11 +150,6 @@ namespace ECS.Public.Classes
                 return;
             ComponentArrays.RemoveAllComponentsFrom(entity);
             EntityArray.DestroyEntity(ref entity);
-        }
-        
-        public void DestroyAllEntities()
-        {
-            EntityArray.ForeachExtantEntity((ref Entity entity) => DestroyEntity(ref entity));
         }
 
         internal void AddComponent<T>(in Entity entity) where T : struct, IComponentData

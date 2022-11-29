@@ -4,7 +4,7 @@ namespace ECS.Internal.Interfaces
 {
     internal interface IEntityComponent 
     {
-        ulong EntityIDIndex { get; }
+       ulong EntityIDIndex { get; }
     }
     internal interface IEntity : IEntityComponent
     {

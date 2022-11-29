@@ -8,6 +8,11 @@ using JetBrains.Annotations;
 
 namespace ECS.Public.Classes
 {
+    /// <summary>
+    /// Class that wraps user-defined systems. Contains the custom system logic and references to the component arrays which match the
+    /// infra-system's <see cref="SystemOperatesOn"/> types
+    /// </summary>
+    /// <typeparam name="T">The user-defined system logic</typeparam>
     internal class System<T> : IAnySystem where T : ISystemLogic
     {
         private readonly IComponentAnymap operatingTypeArraysMappingReference;

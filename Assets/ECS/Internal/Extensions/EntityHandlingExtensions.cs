@@ -1,4 +1,5 @@
 ﻿using ECS.Internal.Exceptions;
+using ECS.Internal.Interfaces;
 using ECS.Internal.Types;
 using ECS.Public.Attributes;
 using ECS.Public.Classes;
@@ -50,5 +51,6 @@ namespace ECS.Internal.Extensions
 
             return !entity.HasAnyComponents(typeRestrictions.Without);
         }
+
     }
 }

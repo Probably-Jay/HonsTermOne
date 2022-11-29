@@ -6,6 +6,9 @@ using JetBrains.Annotations;
 
 namespace ECS.Public.Classes
 {
+    /// <summary>
+    /// An entity. This is conceptually simply an ID.
+    /// </summary>
     public readonly struct Entity : IEntity, IEquatable<Entity>
     {
         private Entity(GenerationalID id, World world)
@@ -14,10 +17,8 @@ namespace ECS.Public.Classes
             OwningWorld = world;
         }
 
-        public ulong EntityIDIndex => GenerationalID.ID;
-
-        public delegate void ActionRef(ref Entity entity);
-        public delegate TRet ActionFunc<out TRet>(ref Entity entity);
+        ulong IEntityComponent.EntityIDIndex => GenerationalID.ID;
+        internal ulong EntityIDIndex => GenerationalID.ID;
         
         internal GenerationalID GenerationalID { get; }
         internal World OwningWorld { get; }
@@ -28,6 +29,6 @@ namespace ECS.Public.Classes
         public override bool Equals(object obj) => obj is Entity other && Equals(other);
         public static bool operator==(Entity lhs, Entity rhs) => lhs.Equals(rhs);
         public static bool operator!=(Entity lhs, Entity rhs) => !(lhs == rhs);
-        public override int GetHashCode() => GenerationalID.GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(OwningWorld.GetHashCode(),GenerationalID.GetHashCode());
     }
 }

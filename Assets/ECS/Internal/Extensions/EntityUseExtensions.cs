@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using ECS.Public.Classes;
+using ECS.Public.Delegates;
 using ECS.Public.Interfaces;
 
 namespace ECS.Internal.Extensions
@@ -63,13 +64,13 @@ namespace ECS.Internal.Extensions
             return ref entity.OwningWorld.GetComponent<T>(entity);
         }
 
-        public static void ModifyComponentData<T> (this in Entity entity, [NotNull] [JetBrains.Annotations.NotNull] ComponentEcs<T>.ActionRef<T> componentDelegate) where T : struct, IComponentData
+        public static void ModifyComponentData<T> (this in Entity entity, [NotNull] [JetBrains.Annotations.NotNull] ActionRef<T> componentDelegate) where T : struct, IComponentData
         {
             ref var component = ref entity.OwningWorld.GetComponent<T>(entity);
             componentDelegate(ref component.ComponentData);
         }
 
-        public static TRet QueryComponent<TRet,T> (this in Entity entity, [NotNull] [JetBrains.Annotations.NotNull] ComponentEcs<T>.FunctionRef<TRet,ComponentEcs<T>> componentDelegate) where T : struct, IComponentData
+        public static TRet QueryComponent<TRet,T> (this in Entity entity, [NotNull] [JetBrains.Annotations.NotNull] FunctionRef<TRet,ComponentEcs<T>> componentDelegate) where T : struct, IComponentData
         {
             ref var component = ref entity.OwningWorld.GetComponent<T>(entity);
             return componentDelegate(ref component);

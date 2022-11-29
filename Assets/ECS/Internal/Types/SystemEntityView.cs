@@ -1,16 +1,9 @@
-﻿using System;
-using ECS.Internal.Exceptions;
-using ECS.Internal.Types;
+﻿using ECS.Internal.Exceptions;
+using ECS.Public.Classes;
 using ECS.Public.Interfaces;
 
-namespace ECS.Public.Classes
+namespace ECS.Internal.Types
 {
-    public interface ISystemEntityView
-    {
-        Entity Entity { get; }
-        ref T GetComponent<T>() where T : struct, IComponentData; 
-    }
-
     internal readonly struct SystemEntityViewView : ISystemEntityView
     {
         public Entity Entity { get; }

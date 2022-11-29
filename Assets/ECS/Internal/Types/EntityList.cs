@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using ECS.Internal.Extensions;
 using ECS.Public.Classes;
 using JetBrains.Annotations;
-using System.Runtime.CompilerServices;
-using Unity.Collections.LowLevel.Unsafe;
+using ECS.Public.Delegates;
 using Entity = ECS.Public.Classes.Entity;
 
 namespace ECS.Internal.Types
@@ -12,7 +10,7 @@ namespace ECS.Internal.Types
     internal interface IEntityList
     {
         bool Contains(Entity entityComponent);
-        ulong EntityCount(Entity.ActionFunc<bool> countDelegate);
+        ulong EntityCount(EntityActionFunc<bool> countDelegate);
     }
     
     internal class EntityList : IEntityList
@@ -23,13 +21,13 @@ namespace ECS.Internal.Types
             list = new NonBoxingList<Entity>(initialCapacity);
         }
 
-        public void ForeachExtantEntity([NotNull] Entity.ActionRef action)
+        public void ForeachExtantEntity([NotNull] EntityActionRef entityAction)
         {
             foreach (ref var entity in list)
             {
                 if (entity.IsNullEntity())
                     continue;
-                action(ref entity);
+                entityAction(ref entity);
             }
         } 
         public void ForeachExtantEntity([NotNull] Action<Entity> action)
@@ -42,7 +40,7 @@ namespace ECS.Internal.Types
             }
         }
         
-        public ulong EntityCount([CanBeNull] Entity.ActionFunc<bool> countDelegate)
+        public ulong EntityCount([CanBeNull] EntityActionFunc<bool> countDelegate)
         {
             var count = 0ul;
             ForeachExtantEntity((ref Entity entity) =>
@@ -92,8 +90,6 @@ namespace ECS.Internal.Types
             Entity.Factory.Destroy(ref actualEntity);
         }
         
-        
-
         private ref Entity GetEntity(in Entity entity)
         {
             if (!EntityIsValid(entity)) 
@@ -102,7 +98,7 @@ namespace ECS.Internal.Types
             return ref list[entity.EntityIDIndex];
         }
 
-        public bool ContainsEntity(Entity entity) 
+        public bool Contains(Entity entity)
             => !GetEntity(entity).IsNullEntity();
 
         private bool EntityIsValid(in Entity entity)
@@ -137,8 +133,5 @@ namespace ECS.Internal.Types
             }
         }
 
-
-        public bool Contains(Entity entity)
-            => ContainsEntity(entity);
     }
 }

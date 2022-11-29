@@ -4,6 +4,7 @@ using ECS.Internal.Extensions;
 using ECS.Internal.Helper;
 using ECS.Internal.Interfaces;
 using ECS.Public.Classes;
+using ECS.Public.Delegates;
 using ECS.Public.Interfaces;
 using JetBrains.Annotations;
 using Entity = ECS.Public.Classes.Entity;
@@ -35,7 +36,7 @@ namespace ECS.Internal.Types
 
         [NotNull] public Type ContainedType => typeof(T);
         
-        public void ForeachComponent<TInner>([NotNull] ComponentEcs<TInner>.ActionRef<T> action) where TInner : struct, IComponentData
+        public void ForeachComponent<TInner>([NotNull] ActionRef<T> action) where TInner : struct, IComponentData
         {
             foreach (ref var entity in list)
             {

@@ -16,6 +16,12 @@ namespace ECS.Public.Attributes
         bool HasNoRestrictions { get; }
     }
     
+    /// <summary>
+    /// Defines the component types a system can operate on. Should declare either <see cref="Exactly"/> or <see cref="Contains"/>. If declares <see cref="Contains"/>
+    /// may also optionally declare <see cref="Without"/>.
+    /// If system does not operate on any component types then this attribute must still exist but should be left empty.
+    /// <remarks><see cref="Exactly"/>, <see cref="Contains"/>, and <see cref="Without"/> must be logically consistent</remarks>
+    /// </summary>
     [PublicAPI]
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class SystemOperatesOn : Attribute, ITypeRestriction
